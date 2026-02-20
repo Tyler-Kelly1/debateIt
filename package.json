@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@datastructures-js/priority-queue": "^6.3.5",
     "vue": "^3.5.25"
   },
   "devDependencies": {
@@ -16,6 +17,7 @@
     "@vue/tsconfig": "^0.8.1",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
+    "vite-svg-loader": "^5.1.0",
     "vue-tsc": "^3.2.4"
   }
 }
