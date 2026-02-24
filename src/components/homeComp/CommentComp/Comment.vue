@@ -41,7 +41,6 @@ function lightFire(){
 
 }
 
-
 </script>
 
 <template>
@@ -51,41 +50,41 @@ function lightFire(){
     <div
         class = "vote-box"
         :class= "{'is-lit': props.lit}"
-         @click="lightFire"
+        @click="lightFire"
     >{{votes}} ^</div>
   </div>
 </template>
 
 <style scoped>
 
-  .comment{
-    display: block;
-    border: 1px solid #ccc;
-  }
+.comment{
+  display: block;
+  border: 1px solid #ccc;
+}
 
-  .comment h4{
-    font-size: 0.5rem;
-    margin-top: 0.1rem;
-    margin-bottom: 0.1rem;
-    border: #00d9ff solid 1px;
-  }
+.comment h4{
+  font-size: 0.5rem;
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+  border: #00d9ff solid 1px;
+}
 
-  .comment p{
-    margin-top: 0;
-    margin-bottom: 0.2rem;
-  }
+.comment p{
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+}
 
-  .vote-box {
-    margin-left: auto;
-    width: fit-content;
-    padding: 4px 8px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    background: #ff0000; /* Default (Unlit) */
-  }
+.vote-box {
+  margin-left: auto;
+  width: fit-content;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  background: #ff0000; /* Default (Unlit) */
+}
 
-  .vote-box.is-lit {
-    background: burlywood;
-  }
+.vote-box.is-lit {
+  background: burlywood;
+}
 
 </style>

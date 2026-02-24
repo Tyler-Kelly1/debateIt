@@ -3,7 +3,10 @@
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": ".",
-    "paths": { "@/*": ["./src/*"] }
+    "paths": { "@/*": ["./src/*"] },
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"], // "ESNext" includes all standard utility types
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
