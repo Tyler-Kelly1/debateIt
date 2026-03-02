@@ -1,87 +1,113 @@
 <script setup>
 // 1. IMPORTING REQUISITES
-// We import child components to use them in our HTML (template)
 import CommentsBox from "./homeComp/CommentComp/CommentsBox.vue";
 import NewTake from "./homeComp/NewTakeArea/NewTake.vue";
-
-// 'computed', 'ref', and 'reactive' are Vue's "Reactivity" tools.
-// Even if not all are used yet, they are the building blocks for dynamic data.
-import { computed, ref, reactive } from "vue";
 import StatBox from "./homeComp/StatsComp/StatBox.vue";
 
-import supabase from './config/supabaseClient.js'
-//con
-// 2. DATA STATE (The "Source of Truth")
-// 'reactive' is used for objects or arrays.
-// When these values change, Vue automatically updates the UI.
-// These will be replaced by database calls soon
-const testData1 = reactive({
-  "1": { id: "1", content: "Blockchain did it better", votes: 2, lit: false },
-  "2": { id: "2", content: "World", votes: 0, lit: false }
-});
+// 'onMounted' is a Lifecycle Hook. It runs code as soon as the component appears on screen.
+import { computed, ref, reactive, onMounted } from "vue";
 
-const testData2 = reactive({
-  "1": { id: "1", content: "Hello", votes: 1, lit: false },
-  "2": { id: "2", content: "World", votes: 0, lit: false },
-  "3": { id: "3", content: "World", votes: 3, lit: false },
-  "4": { id: "4", content: "ME", votes: 2, lit: false },
-  "5": { id: "5", content: "or ME!", votes: 2, lit: false },
-});
+// This is your connection to the outside world (the database)
+import supabase from "../config/supabaseClient.js"
 
-const testingStatsData = reactive({
-  "agree":105,
-  "disagree":83
+// 2. DATA STATE (The "Local Memory")
+// We use 'reactive' so that when the database returns data, the UI updates instantly.
+const agreeTakes = reactive({});
+const disagreeTakes = reactive({});
+
+// Stores the numerical statistics (e.g., total vote counts)
+const statsData = reactive({
+  "agree": null,
+  "disagree": null
 })
 
-const debateTopic = reactive("TestingTopic")
+// Stores the main question/topic being debated
+const debateTopic = reactive({
+  "topic": null
+})
 
+// 3. DATABASE LOGIC (The "Async" Function)
+// 'async' tells Vue this function will take time to finish (waiting for the internet).
+async function updateData() {
 
-// 3. LOGIC & METHODS
-// This function is a placeholder for future API calls to a database.
-function handleCommentUpdates() {
-  // Logic for syncing comments would go here
+  // We "await" the response from Supabase.
+  // We are selecting everything (*) from Debates and the related 'Takes' table.
+  let { data, error } = await supabase
+      .from('Debates')
+      .select(`
+        *,
+        Takes (
+          Agree,
+          message,
+          likes,
+          dislikes
+        )
+      `)
+
+  // In this project, we assume there is only one active debate, so we grab the first entry [0].
+  data = data[0]
+
+  // Update our local topic with the string from the database
+  debateTopic.topic = data.topic
+
+  // 'takes' is a list of all posts attached to this debate
+  const takes = data.Takes
+
+  // We loop through every take we found in the database
+  Object.entries(takes).forEach(([key, value]) => {
+
+    // Unique ID generation: Combining timestamp and index key to prevent duplicates
+    const id = Date.now().toString() + key;
+
+    // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
+    if (value.Agree) {
+      // Map database fields (message, likes) to our local object format (content, votes)
+      agreeTakes[id] = { id: id, content: value.message, votes: value.likes, lit: false }
+    } else {
+      disagreeTakes[id] = { id: id, content: value.message, votes: value.likes, lit: false }
+    }
+  })
+
+  // Update the statistics display (StatBox)
+  statsData.agree = data.agree
+  statsData.disagree = data.disagree
 }
 
 /**
- * Handles receiving a new "Take" (post) from the child component.
- * @param data - The post object
- * @param side - A boolean or value determining which list to add to
+ * LIFECYCLE HOOK: onMounted
+ * This is the trigger. As soon as the user opens the app,
+ * we run 'updateData' to fetch the latest info from the database.
  */
-function handleSubmitTake(data, side) {
-  // Logic: If 'side' is truthy, update the first list, otherwise the second.
-  // Because testData1/2 are 'reactive', adding a key here updates the screen instantly.
-  if (side) {
-    testData1[data.id] = data;
-    testingStatsData.agree += 1
-  } else {
-    testData2[data.id] = data;
-    testingStatsData.disagree += 1
-  }
-}
+onMounted(() => {
+  updateData()
+})
 
+// 4. SUBMISSION LOGIC
+function handleSubmitTake(data, side) {
+  // NEXT STEP: You will need to write code here to 'INSERT' the new take
+  // into Supabase so it stays there forever!
+}
 </script>
 
 <template>
   <div class="home">
+    <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
 
-    <StatBox :disagree-votes="testingStatsData.disagree" :agree-votes="testingStatsData.agree" />
-
-    <NewTake @submitTake="handleSubmitTake"></NewTake>
+    <NewTake @submitTake="handleSubmitTake" :debate-topic="debateTopic.topic"></NewTake>
 
     <CommentsBox
-        :agreedComments="testData1"
-        :disagreedComments="testData2"
+        :agreedComments="agreeTakes"
+        :disagreedComments="disagreeTakes"
     ></CommentsBox>
   </div>
 </template>
 
 <style scoped>
-/* 'scoped' means these styles ONLY apply to this component and won't leak out */
 .home {
   display: flex;
   flex-direction: column;
   border: 1px solid yellow;
   width: 100%;
-  height: 100vh; /* Takes up full viewport height */
+  height: 100vh;
 }
 </style>

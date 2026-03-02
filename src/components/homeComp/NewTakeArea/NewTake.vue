@@ -11,6 +11,15 @@ interface CommentData {
   lit?: boolean;
 }
 
+const props = defineProps({
+
+  debateTopic: {
+    type: String,
+    required: true,
+  }
+
+})
+
 // 2. LOCAL STATE (Internal Variables)
 // 'take' stores what the user is currently typing in the textarea.
 const take = ref('')
@@ -54,7 +63,8 @@ function handleCommentSubmit() {
 
 <template>
   <div class="main">
-    What is your take?
+    <h3 v-if="props.debateTopic">{{props.debateTopic}}</h3>
+    <h3 v-else>FAILED TO LOAD TOPIC</h3>
 
     <div class="inputWrapper">
       <textarea
