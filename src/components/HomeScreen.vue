@@ -16,9 +16,24 @@ const agreeTakes = reactive({});
 const disagreeTakes = reactive({});
 
 // Stores the numerical statistics (e.g., total vote counts)
-const statsData = reactive({
-  "agree": null,
-  "disagree": null
+const statsData = computed(() => {
+
+  // If the takes arent loaded from the db yet
+  if(agreeTakes.length === 0 || disagreeTakes.length === 0) {
+
+    return {
+      agree:0,
+      disagree:0
+    }
+
+  }
+
+  //else or otherwise
+  return {
+    agree: Object.keys(agreeTakes).length,
+    disagree: Object.keys(disagreeTakes).length
+  }
+
 })
 
 // Stores the main question/topic being debated
@@ -40,7 +55,8 @@ async function updateData() {
           Agree,
           message,
           likes,
-          dislikes
+          dislikes,
+          take_id
         )
       `)
 
@@ -57,7 +73,7 @@ async function updateData() {
   Object.entries(takes).forEach(([key, value]) => {
 
     // Unique ID generation: Combining timestamp and index key to prevent duplicates
-    const id = Date.now().toString() + key;
+    const id = value.take_id
 
     // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
     if (value.Agree) {
@@ -78,15 +94,62 @@ async function updateData() {
  * This is the trigger. As soon as the user opens the app,
  * we run 'updateData' to fetch the latest info from the database.
  */
+// Inside your <script setup> in Home.vue
+
 onMounted(() => {
-  updateData()
-})
+  // 1. Initial load of existing data
+  updateData();
+
+  // 2. Set up the Realtime Listener
+  const takesSubscription = supabase
+
+      .channel('table-db-changes') // Name the channel whatever you like
+
+      .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',    // Only listen for NEW rows
+            schema: 'public',
+            table: 'Takes'      // The table to watch
+          },
+          (payload) => {
+            // This 'payload' is the new row sent from the database!
+            const newRow = payload.new;
+            console.log('Change received from DB!', newRow);
+
+            // Map the DB columns to your local reactive object format
+            const formattedTake = {
+              id: newRow.take_id,
+              content: newRow.message,
+              votes: newRow.likes,
+              side: newRow.Agree,
+              lit: false
+            };
+
+            // Inject into the correct "bucket" based on the 'Agree' boolean
+            if (formattedTake.side) {
+              agreeTakes[newRow.id] = formattedTake;
+            } else {
+              disagreeTakes[newRow.id] = formattedTake;
+            }
+          }
+      )
+      .subscribe();
+});
 
 // 4. SUBMISSION LOGIC
-function handleSubmitTake(data, side) {
-  // NEXT STEP: You will need to write code here to 'INSERT' the new take
-  // into Supabase so it stays there forever!
+async function handleSubmitTake(newTake, side) {
+
+  console.log(newTake)
+    const { data, error } = await supabase
+      .from('Takes')
+      .insert([
+        { message: newTake.content, topic: debateTopic.topic, likes:newTake.votes, Agree:side },
+      ])
+      .select()
+
 }
+
 </script>
 
 <template>
@@ -103,6 +166,7 @@ function handleSubmitTake(data, side) {
 </template>
 
 <style scoped>
+
 .home {
   display: flex;
   flex-direction: column;
@@ -110,4 +174,5 @@ function handleSubmitTake(data, side) {
   width: 100%;
   height: 100vh;
 }
+
 </style>

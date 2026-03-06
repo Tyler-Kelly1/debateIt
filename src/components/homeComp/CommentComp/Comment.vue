@@ -12,7 +12,12 @@ const props = defineProps({
     type:String,
     required: true
   },
-  votes:{
+  likes:{
+    type:Number,
+    default:0,
+    required:true
+  },
+  dislikes:{
     type:Number,
     default:0,
     required:true
@@ -26,18 +31,35 @@ const props = defineProps({
 
 // 1. Define the events this child can trigger
 const emit = defineEmits<{
-  (e: 'updateFire', status: boolean): void
+  (e: 'takeRating', command:string): void
 }>()
 
-//2. Function to determine when fire lit
-function lightFire(){
+const reactionStatus = ref(null)
 
-  if(!props.lit){
-    emit("updateFire",true);
+//2. Function to determine when fire lit
+function handleTakeRating(status: boolean): void{
+
+
+  if(reactionStatus.value === true && status){
+    reactionStatus.value = null;
+    emit("takeRating", "remove_rating")
+    return
+  }
+
+  if(reactionStatus.value === false && !status){
+    reactionStatus.value = null;
+    emit("takeRating", "remove_rating")
+    return
+  }
+
+  if(status){
+    emit("takeRating", "add_like")
   }
   else{
-    emit("updateFire",false);
+    emit("takeRating", "add_dislike")
   }
+  
+  reactionStatus.value = status
 
 }
 
@@ -49,9 +71,22 @@ function lightFire(){
     <p>{{content}}</p>
     <div
         class = "vote-box"
-        :class= "{'is-lit': props.lit}"
-        @click="lightFire"
-    >{{votes}} ^</div>
+    >
+      <div
+          :class="reactionStatus === null ? 'like-box' : reactionStatus ? 'like-box-lit' : 'like-box' "
+          @click="handleTakeRating(true)"
+      >
+        ^ {{props.likes}}
+      </div>
+
+      <div
+          :class="reactionStatus === null ? 'dislike-box' : !reactionStatus ? 'dislike-box-lit' : 'dislike-box' "
+          @click="handleTakeRating(false)"
+      >
+        v {{props.dislikes}}
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -81,10 +116,24 @@ function lightFire(){
   cursor: pointer;
   transition: background 0.3s ease;
   background: #ff0000; /* Default (Unlit) */
+  display: flex;
 }
 
-.vote-box.is-lit {
-  background: burlywood;
+.like-box{
+  background-color: green;
 }
+
+.dislike-box{
+  background-color: darkred;
+}
+
+.like-box-lit{
+  background-color: lightgreen;
+}
+
+.dislike-box-lit{
+  background-color: lightcoral;
+}
+
 
 </style>

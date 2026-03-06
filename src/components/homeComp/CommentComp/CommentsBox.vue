@@ -54,33 +54,12 @@ const emit = defineEmits<{
   (e: 'updateFireCount', amount: number): void
 }>()
 
-// 5. THE VOTE LOGIC
-/**
- * Logic for when a user clicks the fire/vote button.
- * @param id - The unique ID of the comment
- * @param isAgree - Which column are we in?
- */
-function handleVote(id: string, isAgree: boolean) {
-  // Use the computed property to find the specific comment
-  const selectedComments = isAgree ? sortedAgree : sortedDisagree;
 
-  // .value is needed because computed properties are reactive wrappers
-  const comment = selectedComments.value.find(c => c.id === id);
 
-  if (comment) {
-    // If it's not "lit" (not voted for yet)
-    if (!comment.lit) {
-      comment.votes += 1;
-      comment.lit = true;
-      emit("updateFireCount", 1); // Tell parent to increase global fire count
-    } else {
-      // If user clicks again, "un-vote" it
-      comment.votes -= 1;
-      comment.lit = false;
-      emit("updateFireCount", -1); // Tell parent to decrease global fire count
-    }
-  }
+function handleTakeRating(command){
+  console.log(command)
 }
+
 </script>
 
 <template>
@@ -92,7 +71,7 @@ function handleVote(id: string, isAgree: boolean) {
             :content="comment.content"
             :votes="comment.votes"
             :lit="comment.lit"
-            v-on:updateFire="handleVote(comment.id, true)"
+            @takeRating = "handleTakeRating"
         />
       </div>
     </div>
