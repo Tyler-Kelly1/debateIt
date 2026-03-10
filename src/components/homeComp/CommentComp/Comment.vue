@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="js">
 
 import {ref, computed, watch} from 'vue'
 
@@ -22,33 +22,41 @@ const props = defineProps({
     default:0,
     required:true
   },
-  lit:{
-    type:Boolean,
-    default:false,
-    required:false
-  }
 })
-
-// 1. Define the events this child can trigger
-const emit = defineEmits<{
-  (e: 'takeRating', command:string): void
-}>()
 
 const reactionStatus = ref(null)
 
+const emit = defineEmits(["takeRating"])
+
 //2. Function to determine when fire lit
-function handleTakeRating(status: boolean): void{
+function handleTakeRating(status){
 
-
+  console.log(status)
+  console.log(reactionStatus.value)
+  
   if(reactionStatus.value === true && status){
     reactionStatus.value = null;
-    emit("takeRating", "remove_rating")
+    emit("takeRating", "remove_like_rating")
     return
   }
 
   if(reactionStatus.value === false && !status){
     reactionStatus.value = null;
-    emit("takeRating", "remove_rating")
+    emit("takeRating", "remove_dislike_rating")
+    return
+  }
+
+  if(!status && reactionStatus.value === true){
+    reactionStatus.value = false;
+    emit("takeRating", "remove_like_rating")
+    emit("takeRating", "add_dislike")
+    return
+  }
+
+  if(status && reactionStatus.value === false){
+    reactionStatus.value = true;
+    emit("takeRating", "remove_dislike_rating")
+    emit("takeRating", "add_like")
     return
   }
 

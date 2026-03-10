@@ -8,7 +8,6 @@ interface CommentData {
   id: string;
   content: string;
   votes: number;
-  lit?: boolean;
 }
 
 const props = defineProps({
@@ -17,16 +16,11 @@ const props = defineProps({
     type: String,
     required: true,
   }
-
 })
 
 // 2. LOCAL STATE (Internal Variables)
 // 'take' stores what the user is currently typing in the textarea.
 const take = ref('')
-
-// 'side' stores the position of the toggle switch.
-// false = Disagree, true = Agree.
-const side = ref(false)
 
 // 3. EMIT DEFINITION
 // This defines the "megaphone" this component uses to talk to the parent.
@@ -44,15 +38,11 @@ function handleCommentSubmit() {
     // Argument 1: The name of the event ('submitTake')
     // Argument 2: The actual data object (The "Take")
     // Argument 3: The side chosen (The boolean from our toggle)
+
     emit('submitTake',
         {
-          // We use Date.now() to create a unique-ish ID for a beginner project
-          id: Date.now().toString(),
           content: take.value,
-          votes: 0,
-          lit: false
-        },
-        side.value
+        }
     )
 
     // RESET: Clear the text area after submitting so the user can type a new one
@@ -80,16 +70,6 @@ function handleCommentSubmit() {
       </button>
     </div>
 
-    <div class="toggle-container">
-      Disagree
-
-      <label class="switch">
-        <input type="checkbox" v-model="side">
-        <span class="slider round"></span>
-      </label>
-
-      Agree
-    </div>
   </div>
 </template>
 
@@ -127,51 +107,4 @@ function handleCommentSubmit() {
   margin: auto;
 }
 
-/* UI/UX for the Toggle Switch (Standard CSS Switch pattern) */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px; width: 26px;
-  left: 4px; bottom: 4px;
-  background-color: white;
-  transition: .4s;
-}
-
-/* Change slider color when 'Agree' (checked) */
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
 </style>

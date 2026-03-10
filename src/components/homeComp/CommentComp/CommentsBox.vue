@@ -8,7 +8,8 @@ interface CommentData {
   id: string;
   content: string;
   votes: number;
-  lit?: boolean; // The '?' means this property is optional
+  likes: number;
+  dislikes: number;
 }
 
 // 2. PROPS (Incoming Data)
@@ -28,6 +29,8 @@ const props = defineProps({
 // In Vue, 'computed' is a reactive variable that "derives" its value from other data.
 // If the votes change, these functions automatically re-run to re-sort the list.
 
+const sortingFilter = ref("likes")
+
 const sortedAgree = computed(() => {
   const displayedAgreed = [];
 
@@ -37,7 +40,13 @@ const sortedAgree = computed(() => {
   }
 
   // Sort: Highest votes at the top (b.votes - a.votes)
-  return displayedAgreed.sort((a, b) => b.votes - a.votes);
+  if(sortingFilter.value === "likes") {
+    return displayedAgreed.sort((a, b) => b.likes - a.likes);
+  }
+  else if (sortingFilter.value === "dislikes") {
+    return displayedAgreed.sort((a, b) => b.dislikes - a.dislikes);
+  }
+
 });
 
 const sortedDisagree = computed(() => {
@@ -45,33 +54,60 @@ const sortedDisagree = computed(() => {
   for (const [key, value] of Object.entries(props.disagreedComments)) {
     displayedDisagreed.push(value);
   }
-  return displayedDisagreed.sort((a, b) => b.votes - a.votes);
+
+  // Sort: Highest votes at the top (b.votes - a.votes)
+  if(sortingFilter.value === "likes") {
+    return displayedDisagreed.sort((a, b) => b.likes - a.likes);
+  }
+  else if (sortingFilter.value === "dislikes") {
+    return displayedDisagreed.sort((a, b) => b.dislikes - a.dislikes);
+  }
+
 });
 
 // 4. EMITS (Sending Signals Up)
 // This allows this component to tell the Parent that a "Fire" count has changed globally.
 const emit = defineEmits<{
-  (e: 'updateFireCount', amount: number): void
+  (e: 'updateTakeVote',  take_id:number, command: string): void
 }>()
 
+function handleTakeRating(command: string, take_id: number) {
+  emit("updateTakeVote", take_id, command)
+}
 
-
-function handleTakeRating(command){
-  console.log(command)
+function updateSortingFilter(filter){
+  if(filter === "likes"){
+    sortingFilter.value = "likes";
+  }
+  else{
+    sortingFilter.value = "dislikes";
+  }
 }
 
 </script>
 
 <template>
+  <div class="filterBar">
+
+    <div @click="updateSortingFilter('likes')">
+      ^
+    </div>
+    <div @click="updateSortingFilter('dislikes')"
+    >
+      V
+    </div>
+
+  </div>
+
   <div class="container">
     <div class="col agreeCol">
       <div v-for="comment in sortedAgree" :key="comment.id">
         <Comment
             :id="comment.id"
             :content="comment.content"
-            :votes="comment.votes"
-            :lit="comment.lit"
-            @takeRating = "handleTakeRating"
+            :likes="comment.likes"
+            :dislikes="comment.dislikes"
+            @takeRating = "(command) => handleTakeRating(command, comment.id)"
         />
       </div>
     </div>
@@ -81,9 +117,9 @@ function handleTakeRating(command){
         <Comment
             :id="comment.id"
             :content="comment.content"
-            :votes="comment.votes"
-            :lit="comment.lit"
-            v-on:updateFire="handleVote(comment.id, false)"
+            :likes="comment.likes"
+            :dislikes="comment.dislikes"
+            @takeRating = "(command) => handleTakeRating(command, comment.id)"
         />
       </div>
     </div>
@@ -98,6 +134,11 @@ function handleTakeRating(command){
   height: fit-content;
   margin: auto;
   padding: 3px;
+}
+
+.filterBar {
+  display: flex;
+  margin: auto;
 }
 
 .col {
