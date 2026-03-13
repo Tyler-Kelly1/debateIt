@@ -30,7 +30,7 @@ const emit = defineEmits([
 ])
 
 // 4. SUBMISSION LOGIC
-function handleCommentSubmit() {
+function handleTakeSubmit() {
   // Only submit if the user has actually typed something
   if (take.value) {
 
@@ -41,7 +41,7 @@ function handleCommentSubmit() {
 
     emit('submitTake',
         {
-          content: take.value,
+          message: take.value,
         }
     )
 
@@ -65,7 +65,7 @@ function handleCommentSubmit() {
     </div>
 
     <div class="submitButtonContainer">
-      <button @click="handleCommentSubmit">
+      <button @click="handleTakeSubmit">
         Submit
       </button>
     </div>

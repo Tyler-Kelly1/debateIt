@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, defineProps } from "vue";
-import Comment from "./Comment.vue";
+import Take from "./Take.vue";
 
-// 1. DATA BLUEPRINT (TypeScript Interface)
-// This describes exactly what a Comment object should look like.
-interface CommentData {
-  id: string;
-  content: string;
-  votes: number;
-  likes: number;
-  dislikes: number;
+type FormattedTake = {
+  take_id: string;
+  message: string;
+  user_id?: string|null;
+  topic: string;
+  side: boolean;
 }
+
 
 // 2. PROPS (Incoming Data)
 // These are the "inputs" passed down from the Parent (HomeView).
@@ -32,6 +31,7 @@ const props = defineProps({
 const sortingFilter = ref("likes")
 
 const sortedAgree = computed(() => {
+
   const displayedAgreed = [];
 
   // Convert our Object dictionary from the parent into an Array so we can sort it.
@@ -50,6 +50,7 @@ const sortedAgree = computed(() => {
 });
 
 const sortedDisagree = computed(() => {
+
   const displayedDisagreed = [];
   for (const [key, value] of Object.entries(props.disagreedComments)) {
     displayedDisagreed.push(value);
@@ -68,11 +69,11 @@ const sortedDisagree = computed(() => {
 // 4. EMITS (Sending Signals Up)
 // This allows this component to tell the Parent that a "Fire" count has changed globally.
 const emit = defineEmits<{
-  (e: 'updateTakeVote',  take_id:number, command: string): void
+  (e: 'newReaction',  take_id:number, command: string): void
 }>()
 
-function handleTakeRating(command: string, take_id: number) {
-  emit("updateTakeVote", take_id, command)
+function handleNewReaction(reaction:any, take_id: number) {
+  emit("newReaction", {type:reaction.type, takeSide:reaction.takeSide, take_id:take_id})
 }
 
 function updateSortingFilter(filter){
@@ -101,25 +102,27 @@ function updateSortingFilter(filter){
 
   <div class="container">
     <div class="col agreeCol">
-      <div v-for="comment in sortedAgree" :key="comment.id">
-        <Comment
-            :id="comment.id"
-            :content="comment.content"
-            :likes="comment.likes"
-            :dislikes="comment.dislikes"
-            @takeRating = "(command) => handleTakeRating(command, comment.id)"
+      <div v-for="take in sortedAgree" :key="take.take_id">
+        <Take
+            :take_id = "take.take_id"
+            :message= "take.message"
+            :user_id= "take.user_id"
+            :side = "take.side"
+            :reactions= "take.reactions"
+            @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>
     </div>
 
     <div class="col disagreeCol">
-      <div v-for="comment in sortedDisagree" :key="comment.id">
-        <Comment
-            :id="comment.id"
-            :content="comment.content"
-            :likes="comment.likes"
-            :dislikes="comment.dislikes"
-            @takeRating = "(command) => handleTakeRating(command, comment.id)"
+      <div v-for="take in sortedDisagree" :key="take.take_id">
+        <Take
+            :take_id = "take.take_id"
+            :message = "take.message"
+            :user_id= "take.user_id"
+            :side = "take.side"
+            :reactions= "take.reactions"
+            @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>
     </div>

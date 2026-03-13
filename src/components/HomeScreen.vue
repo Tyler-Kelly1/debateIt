@@ -1,18 +1,19 @@
 <script setup>
 // 1. IMPORTING REQUISITES
-import CommentsBox from "./homeComp/CommentComp/CommentsBox.vue";
+import TakesBox from "./homeComp/CommentComp/TakesBox.vue";
 import NewTake from "./homeComp/NewTakeArea/NewTake.vue";
 import StatBox from "./homeComp/StatsComp/StatBox.vue";
-import AuthGate from "./AuthGate.vue"
 
 // 'onMounted' is a Lifecycle Hook. It runs code as soon as the component appears on screen.
 import {computed, onMounted, reactive, ref} from "vue";
 
 // This is your connection to the outside world (the database)
-import supabase from "../config/supabaseClient.js"
 import ChooseSideScreen from "./ChooseSidePage/ChooseSideScreen.vue"
 import newTake from "./homeComp/NewTakeArea/NewTake.vue"
 
+//Services
+import {TakeServices} from "../../Services/takesService.ts";
+import {ReactionService} from "../../Services/reactionService.ts";
 
 
 // 2. DATA STATE (The "Local Memory")
@@ -22,7 +23,7 @@ const disagreeTakes = reactive({});
 
 const userSide = ref(sessionStorage.getItem("side"));
 const session = ref(null)
-const userID = ref(null);
+const userID = ref("14acdc55-e63d-441b-94a6-894930e1ff13")
 
 // Stores the numerical statistics (e.g., total vote counts)
 const statsData = computed(() => {
@@ -62,136 +63,170 @@ function handleSideChosen(){
 // 'async' tells Vue this function will take time to finish (waiting for the internet).
 async function updateData() {
 
-  // We "await" the response from Supabase.
-  // We are selecting everything (*) from Debates and the related 'Takes' table.
-  let {data, error} = await supabase
-      .from('Debates')
-      .select(`
-        *,
-        Takes (
-          Agree,
-          message,
-          take_id
-        )
-      `)
+  //Load all takes and the topic
+  try {
 
-  // In this project, we assume there is only one active debate, so we grab the first entry [0].
-  data = data[0]
+   TakeServices.loadAllTakesAndTopic().then((takesAndTopic) => {
 
-  // Update our local topic with the string from the database
-  debateTopic.topic = data.topic
+      // Update our local topic with the string from the database
+      debateTopic.topic = takesAndTopic.topic
 
-  // 'takes' is a list of all posts attached to this debate
-  const takes = data.Takes
+      // We loop through every take we found in the database
+      Object.entries(takesAndTopic.takes).forEach(([key, newTake]) => {
 
-  // We loop through every take we found in the database
-  Object.entries(takes).forEach(([key, value]) => {
+            // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
+            if (newTake.side) {
 
-    // Unique ID generation: Combining timestamp and index key to prevent duplicates
-    const id = value.take_id
+              // Map database fields (message, likes) to our local object format (content, votes)
+              agreeTakes[newTake.take_id] = {
+                take_id: newTake.take_id,
+                message: newTake.message,
+                user_id: newTake.user_id,
+                topic: newTake.topic,
+                side: newTake.side,
+                reactions: {}
+              }
 
-    // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
-    if (value.Agree) {
-      // Map database fields (message, likes) to our local object format (content, votes)
-      agreeTakes[id] = { id: id, content: value.message }
-    } else {
-      disagreeTakes[id] = { id: id, content: value.message}
-    }
+            }
 
-  })
+            else {
+              disagreeTakes[newTake.take_id] = {
 
-  // Update the statistics display (StatBox)
-  statsData.agree = data.agree
-  statsData.disagree = data.disagree
+                take_id: newTake.take_id,
+                message: newTake.message,
+                user_id: newTake.user_id,
+                topic: newTake.topic,
+                side: newTake.side,
+                reactions: {}
+
+              }
+
+            }
+
+          }
+      )
+    })
+
+  }
+
+  catch(err) {
+    console.log(err)
+  }
+
 }
-
 
 /**
  * LIFECYCLE HOOK: onMounted
  * This is the trigger. As soon as the user opens the app,
  * we run 'updateData' to fetch the latest info from the database.
  */
-// Inside your <script setup> in Home.vue
 
 onMounted(async () => {
-
-  // 1. Check if a user is already logged in from a previous visit
-  const {data} = await supabase.auth.getSession()
-  session.value = data.session
-
-  supabase.auth.onAuthStateChange((_event, _session) => {
-    session.value = _session
-    userID.value = session.value.user.id
-
-    // If they log out, you might want to clear your 'userSide' ref too!
-    if (!_session) userSide.value = null
-  })
 
   // 1. Initial load of existing data
   await updateData();
 
+  const bucketTake = (newTake) => {
+    console.log(newTake);
+
+    //True Side is agree
+    if(newTake.side){
+      agreeTakes[newTake.take_id] = newTake
+
+      // New take need to give it an empty set of reaction
+      agreeTakes[newTake.take_id].reactions = {}
+    }
+
+    //False Side is disagree
+    else{
+      disagreeTakes[newTake.take_id] = newTake;
+      disagreeTakes[newTake.take_id].reactions = {}
+    }
+
+  }
+
   // 2. Set up the Realtime Listener
-  const takesSubscription = supabase
+  TakeServices.subscribeToTakesUpdates(bucketTake)
 
-      .channel('table-db-changes') // Name the channel whatever you like
 
-      .on(
-          'postgres_changes',
-          {
-            event: '*',    // listen for any change
-            schema: 'public',
-            table: 'Takes'      // The table to watch
-          },
-          (payload) => {
-            // This 'payload' is the new row sent from the database!
-            const newRow = payload.new;
-            console.log('Change received from DB!', newRow);
-
-            // Map the DB columns to your local reactive object format
-            const formattedTake = {
-              id: newRow.take_id,
-              side: newRow.Agree,
-              content: newRow.message,
-            };
-
-            // Inject into the correct "bucket" based on the 'Agree' boolean
-            if (formattedTake.side) {
-              agreeTakes[newRow.take_id] = formattedTake;
-            } else {
-              disagreeTakes[newRow.take_id] = formattedTake;
-            }
-          }
-      )
-      .subscribe();
 });
 
 // 4. SUBMISSION LOGIC
-async function handleSubmitTake(newTake) {
+async function handleSubmitTake(newTakeMessage) {
 
   // Freaking love this line of code so elegant
   const usersSelectedSide = userSide.value === "true";
 
-  console.log(newTake)
-    const { data, error } = await supabase
-      .from('Takes')
-      .insert([
-        { message: newTake.content, topic: debateTopic.topic, likes:0, dislikes:0, Agree: usersSelectedSide },
-      ])
-      .select()
+  const dBFormattedTake = {
+
+    message: newTakeMessage.message,
+    user_id: userID.value,
+    topic: debateTopic.topic,
+    side: usersSelectedSide
+
+  }
+
+  // Error handling if failed to insert new take
+  try{
+    TakeServices.submitNewTake(dBFormattedTake)
+  }
+  catch(err){
+    console.log(err)
+  }
 
 }
 
-async function handleCommentVoteUpdate(comment_id, command) {
+async function handleReaction(reaction) {
 
-  console.log(userID)
-  const { data, error } = await supabase
-      .from('Reactions')
-      .insert([
-        {user_id: userID.value, take_id: comment_id, type:"like"}
-      ])
-      .select()
+  //First unpack
+  const reactionType = reaction.type;
+  const takeSide = reaction.takeSide;
+  const take_id = reaction.take_id;
 
-  console.log(error)
+  //Need to check if the reaction already exist
+
+  let take;
+
+  if(takeSide){
+    take = agreeTakes[take_id];
+  }
+  else{
+    take = disagreeTakes[take_id];
+  }
+
+  //if exist
+  if(take.reactions[userID.value]) {
+
+    await ReactionService.updateReaction({
+      user_id: userID.value,
+      take_id: take_id,
+      type: reactionType
+    }).then(
+        take.reactions[userID.value] = reactionType
+    )
+
+
+  }
+  else{
+
+    await ReactionService.submitNewReaction({
+      user_id: userID.value,
+      take_id: take_id,
+      type: reactionType
+    }).then(
+        take.reactions[userID.value] = reactionType
+    )
+
+  }
+
+
+
+
+
+
+
+
+
 
 }
 
@@ -199,10 +234,7 @@ async function handleCommentVoteUpdate(comment_id, command) {
 
 <template>
 
-  <div v-if = "session === null">
-    <AuthGate></AuthGate>
-  </div>
-  <div v-else-if= "userSide !== null " class="home">
+  <div v-if= "userSide !== null " class="home">
     <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
 
     <NewTake @submitTake="handleSubmitTake"
@@ -210,11 +242,11 @@ async function handleCommentVoteUpdate(comment_id, command) {
              :userSide="userSide"
     ></NewTake>
 
-    <CommentsBox
+    <TakesBox
         :agreedComments="agreeTakes"
         :disagreedComments="disagreeTakes"
-        @updateTakeVote="handleCommentVoteUpdate"
-    ></CommentsBox>
+        @newReaction="handleReaction"
+    ></TakesBox>
   </div>
 
   <div class="chooseSide" v-else>
