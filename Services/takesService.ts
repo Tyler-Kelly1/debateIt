@@ -57,7 +57,7 @@ export const TakeServices = {
 
     },
 
-    async loadAllTakesAndTopic(newTake:any): Promise<any> {
+    async loadAllTakesAndTopic(): Promise<any> {
 
         // We are selecting everything (*) from Debates and the related 'Takes' table.
         let {data, error} = await supabase
@@ -69,7 +69,11 @@ export const TakeServices = {
                 message,
                 user_id,
                 topic,
-                side
+                side,
+                Reactions (
+                user_id,
+                type
+                )
             )
             `)
 
@@ -85,7 +89,7 @@ export const TakeServices = {
 
     },
 
-    async submitNewTake(newTake:any): void{
+    async submitNewTake(newTake:any): Promise<void>{
 
         const {error} = await supabase
 
@@ -99,3 +103,6 @@ export const TakeServices = {
     }
 
 }
+
+TakeServices.loadAllTakesAndTopic().then(r => console.log(r.takes[0]));
+

@@ -23,7 +23,7 @@ const disagreeTakes = reactive({});
 
 const userSide = ref(sessionStorage.getItem("side"));
 const session = ref(null)
-const userID = ref("14acdc55-e63d-441b-94a6-894930e1ff13")
+const userID = ref("d98578ca-64e5-470b-86b4-aa5f3e8d5502")
 
 // Stores the numerical statistics (e.g., total vote counts)
 const statsData = computed(() => {
@@ -63,7 +63,7 @@ function handleSideChosen(){
 // 'async' tells Vue this function will take time to finish (waiting for the internet).
 async function updateData() {
 
-  //Load all takes and the topic
+  // Load all takes, with reactions and the topic
   try {
 
    TakeServices.loadAllTakesAndTopic().then((takesAndTopic) => {
@@ -74,32 +74,38 @@ async function updateData() {
       // We loop through every take we found in the database
       Object.entries(takesAndTopic.takes).forEach(([key, newTake]) => {
 
+        const likes = newTake.Reactions.filter((r) => r.type === 'Like').length
+        const dislikes = newTake.Reactions.filter((r) => r.type === 'Dislike').length
+
+        const formattedReactions = newTake.Reactions.reduce((acc, item) => {
+
+          acc[item.user_id] = item.type;
+          return acc;
+
+        }, {})
+
+        console.log(formattedReactions)
+
+        const formattedNewTake = {
+              take_id: newTake.take_id,
+              message: newTake.message,
+              user_id: newTake.user_id,
+              topic: newTake.topic,
+              side: newTake.side,
+              reactions: formattedReactions,
+              likes: likes,
+              dislikes: dislikes,
+            }
+
+
+
             // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
             if (newTake.side) {
-
-              // Map database fields (message, likes) to our local object format (content, votes)
-              agreeTakes[newTake.take_id] = {
-                take_id: newTake.take_id,
-                message: newTake.message,
-                user_id: newTake.user_id,
-                topic: newTake.topic,
-                side: newTake.side,
-                reactions: {}
-              }
-
+              agreeTakes[newTake.take_id] = formattedNewTake
             }
 
             else {
-              disagreeTakes[newTake.take_id] = {
-
-                take_id: newTake.take_id,
-                message: newTake.message,
-                user_id: newTake.user_id,
-                topic: newTake.topic,
-                side: newTake.side,
-                reactions: {}
-
-              }
+              disagreeTakes[newTake.take_id] = formattedNewTake
 
             }
 
@@ -127,7 +133,6 @@ onMounted(async () => {
   await updateData();
 
   const bucketTake = (newTake) => {
-    console.log(newTake);
 
     //True Side is agree
     if(newTake.side){
@@ -145,8 +150,11 @@ onMounted(async () => {
 
   }
 
-  // 2. Set up the Realtime Listener
+  // 2. Set up the Realtime Listener for Takes
   TakeServices.subscribeToTakesUpdates(bucketTake)
+
+  // 3. Set up the Realtime Listner for Reactions
+ //ReactionService.submitNewReaction(b)
 
 
 });
@@ -168,7 +176,7 @@ async function handleSubmitTake(newTakeMessage) {
 
   // Error handling if failed to insert new take
   try{
-    TakeServices.submitNewTake(dBFormattedTake)
+    await TakeServices.submitNewTake(dBFormattedTake)
   }
   catch(err){
     console.log(err)
@@ -218,15 +226,6 @@ async function handleReaction(reaction) {
     )
 
   }
-
-
-
-
-
-
-
-
-
 
 }
 

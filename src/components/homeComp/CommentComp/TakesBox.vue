@@ -109,6 +109,8 @@ function updateSortingFilter(filter){
             :user_id= "take.user_id"
             :side = "take.side"
             :reactions= "take.reactions"
+            :likes = "take.likes"
+            :dislikes = "take.dislikes"
             @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>
@@ -122,6 +124,8 @@ function updateSortingFilter(filter){
             :user_id= "take.user_id"
             :side = "take.side"
             :reactions= "take.reactions"
+            :likes = "take.likes"
+            :dislikes = "take.dislikes"
             @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>

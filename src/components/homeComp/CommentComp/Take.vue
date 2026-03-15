@@ -25,6 +25,12 @@ const props = defineProps({
   side:{
     type:Boolean,
     default:false
+  },
+  likes:{
+    type:Number,
+  },
+  dislikes:{
+    type:Number,
   }
 
 })
@@ -50,13 +56,13 @@ function handleReaction(status){
       <div
           @click="handleReaction('Like')"
       >
-        ^ {{}}
+        ^ {{props.likes}}
       </div>
 
       <div
           @click="handleReaction('Dislike')"
       >
-        v {{}}
+        v {{props.dislikes}}
       </div>
 
     </div>

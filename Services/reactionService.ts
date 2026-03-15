@@ -23,7 +23,7 @@ export const ReactionService = {
                     schema: 'public',
                     table: 'Reactions'      // The table to watch
                 },
-                (payload) => {
+                (payload:any) => {
 
                     // This 'payload' is the new row sent from the database!
                     const updatedReaction : any = payload.new;
