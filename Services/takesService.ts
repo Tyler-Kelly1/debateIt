@@ -104,5 +104,3 @@ export const TakeServices = {
 
 }
 
-TakeServices.loadAllTakesAndTopic().then(r => console.log(r.takes[0]));
-

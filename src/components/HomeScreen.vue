@@ -12,6 +12,7 @@ import ChooseSideScreen from "./ChooseSidePage/ChooseSideScreen.vue"
 import newTake from "./homeComp/NewTakeArea/NewTake.vue"
 
 //Services
+import {AuthService} from "../../Services/authService.ts";
 import {TakeServices} from "../../Services/takesService.ts";
 import {ReactionService} from "../../Services/reactionService.ts";
 
@@ -22,8 +23,7 @@ const agreeTakes = reactive({});
 const disagreeTakes = reactive({});
 
 const userSide = ref(sessionStorage.getItem("side"));
-const session = ref(null)
-const userID = ref("d98578ca-64e5-470b-86b4-aa5f3e8d5502")
+const userID = ref("")
 
 // Stores the numerical statistics (e.g., total vote counts)
 const statsData = computed(() => {
@@ -128,6 +128,11 @@ async function updateData() {
  */
 
 onMounted(async () => {
+
+  //Login
+  AuthService.login("kjames@gmail.com", "password123")
+  const session = await AuthService.getUserSession()
+  userID.value = session.user.id;
 
   // 1. Initial load of existing data
   await updateData();

@@ -137,9 +137,11 @@ function updateSortingFilter(filter){
 .container {
   display: flex;
   border: 2px solid #00d9ff;
-  width: 95%;
+  backgroud: #f3f3f3;
+  width: min(1240px, 92vw);
   height: fit-content;
   margin: auto;
+  overflow: hidden;
   padding: 3px;
 }
 
@@ -154,6 +156,27 @@ function updateSortingFilter(filter){
   overflow-y: scroll; /* Allows scrolling if there are many comments */
   overflow-x: hidden;
 }
+
+.header {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 600;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.agreeHeader{
+  background: #cfead5;
+  color: #006c2f
+}
+
+.disagreeHeader{
+  background: #efd2d2;
+  color: #a30000;
+}
+
 
 /* Specific border colors to differentiate the "Sides" of the social debate */
 .agreeCol { border: 2px solid #00ff19; }

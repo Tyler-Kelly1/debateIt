@@ -47,15 +47,58 @@ const stats = computed(() => {
   <div class="statContainer" v-else>
     Loading Stats...
   </div>
+
+  <div class="statContainer">
+    <div class="voteCircle agree">
+      <div class="icon">👍</div>
+      <div class="count">{{ agreeVotes }}</div>
+    </div>
+
+    <div class="voteCircle disagree">
+      <div class="icon">👎</div>
+      <div class="count">{{ disagreeVotes }}</div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .statContainer {
-  background-color: rosybrown;
-  margin: auto;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-  width: 90%;
+  display: flex;
+  justify-content: center;
+  gap: 34px;
+  margin-top: 16px;
+  margin-bottom: 40px;
 }
+
+.voteCircle {
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+.agree {
+  background: #10c84f;
+}
+
+.disagree {
+  background: #ff3131;
+}
+
+.icon {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.count {
+  font-size: 24px;
+  font-weight: 700;
+}
+
 </style>
