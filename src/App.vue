@@ -8,7 +8,7 @@ import LoginScreen from "./components/LoginComp/LoginScreen.vue";
 
 <template>
 
-<LoginScreen/>
+<HomeScreen/>
 </template>
 
 <style scoped>
