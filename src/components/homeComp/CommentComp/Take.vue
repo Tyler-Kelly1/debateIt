@@ -17,10 +17,10 @@ const props = defineProps({
     default:0,
     required:true
   },
-  reactions:{
-    type:Object,
-    default: [],
-    required: true
+  userReaction:{
+    type: String,
+    default: null,
+    required: false
   },
   side:{
     type:Boolean,
@@ -54,12 +54,14 @@ function handleReaction(status){
         class = "vote-box"
     >
       <div
+          :class="userReaction === 'Like' ? 'like-box-lit' : 'like-box'"
           @click="handleReaction('Like')"
       >
         ^ {{props.likes}}
       </div>
 
       <div
+          :class="userReaction === 'Dislike' ? 'dislike-box-lit' : 'dislike-box'"
           @click="handleReaction('Dislike')"
       >
         v {{props.dislikes}}

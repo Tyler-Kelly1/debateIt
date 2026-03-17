@@ -1,12 +1,36 @@
 <script setup lang="ts">
   import {ref} from "vue";
+  import {AuthService} from "../../../Services/authService";
   import CreateUser from "./CreateUser.vue";
 
   const hasAccount = ref(true)
+  const email = ref("")
+  const password = ref("")
+
+
 
   function createUser(): void {
     hasAccount.value = false;
   }
+
+  function handleLogin(){
+
+    // Attempt to log in
+
+    try{
+
+      AuthService.login(email.value, password.value)
+
+    }
+    catch(error){
+
+
+    }
+
+
+
+  }
+
 </script>
 
 <template>
@@ -14,11 +38,22 @@
     <div class="title">Join the Debate!!</div>
 
     <div class="credentials">
-      <input placeholder="Username" style="width: 50%">
-      <input placeholder="Email" style="width: 50%">
-      <input placeholder="Password" style="width: 50%">
-      <button>Login</button>
-      <button @click="createUser">Create and Account</button>
+
+      <input placeholder="Username"
+             style="width: 50%">
+
+      <input placeholder="Email"
+             v-model="email"
+             style="width: 50%">
+
+      <input placeholder="Password"
+             v-model:="password"
+             style="width: 50%">
+
+      <button
+      @click="handleLogin"
+      >Login</button>
+      <button @click="createUser">Create an Account</button>
     </div>
   </div>
 
@@ -28,6 +63,7 @@
 </template>
 
 <style scoped>
+
 .title
 {
   text-align: center;

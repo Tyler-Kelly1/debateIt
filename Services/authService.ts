@@ -43,6 +43,16 @@ export const AuthService = {
         console.log("Logged Out Successfully")
     },
 
+    async isLoggedIn(){
+
+        const {data, error} = await supabase.auth.getUser();
+
+        if (error || !data) return false
+
+        return true
+
+    },
+
     async getUserSession() {
 
         const { data, error } = await supabase.auth.getSession();

@@ -1,24 +1,16 @@
-<script setup lang="ts">
+<script setup lang="js">
 import { onMounted, ref, computed, defineProps } from "vue";
 import Take from "./Take.vue";
-
-type FormattedTake = {
-  take_id: string;
-  message: string;
-  user_id?: string|null;
-  topic: string;
-  side: boolean;
-}
-
 
 // 2. PROPS (Incoming Data)
 // These are the "inputs" passed down from the Parent (HomeView).
 const props = defineProps({
-  agreedComments: {
+  user_ID: String,
+  agreeTakes: {
     default: () => [],
     required: true
   },
-  disagreedComments: {
+  disagreeTakes: {
     default: () => [],
     required: true
   }
@@ -35,7 +27,7 @@ const sortedAgree = computed(() => {
   const displayedAgreed = [];
 
   // Convert our Object dictionary from the parent into an Array so we can sort it.
-  for (const [key, value] of Object.entries(props.agreedComments)) {
+  for (const [key, value] of Object.entries(props.agreeTakes)) {
     displayedAgreed.push(value);
   }
 
@@ -52,7 +44,7 @@ const sortedAgree = computed(() => {
 const sortedDisagree = computed(() => {
 
   const displayedDisagreed = [];
-  for (const [key, value] of Object.entries(props.disagreedComments)) {
+  for (const [key, value] of Object.entries(props.disagreeTakes)) {
     displayedDisagreed.push(value);
   }
 
@@ -68,11 +60,9 @@ const sortedDisagree = computed(() => {
 
 // 4. EMITS (Sending Signals Up)
 // This allows this component to tell the Parent that a "Fire" count has changed globally.
-const emit = defineEmits<{
-  (e: 'newReaction',  take_id:number, command: string): void
-}>()
+const emit = defineEmits(["newReaction"])
 
-function handleNewReaction(reaction:any, take_id: number) {
+function handleNewReaction(reaction, take_id) {
   emit("newReaction", {type:reaction.type, takeSide:reaction.takeSide, take_id:take_id})
 }
 
@@ -85,6 +75,19 @@ function updateSortingFilter(filter){
   }
 }
 
+function handleUserReactionCheck(takeId){
+
+  let take = props.agreeTakes[takeId] || props.disagreeTakes[takeId];
+  let takeReactions = take.reactions;
+
+
+  if (takeReactions[props.user_ID] && takeReactions[props.user_ID] !== "None"){
+    return takeReactions[props.user_ID];
+  }
+
+  return "None"
+
+}
 </script>
 
 <template>
@@ -103,12 +106,13 @@ function updateSortingFilter(filter){
   <div class="container">
     <div class="col agreeCol">
       <div v-for="take in sortedAgree" :key="take.take_id">
+
         <Take
             :take_id = "take.take_id"
             :message= "take.message"
             :user_id= "take.user_id"
             :side = "take.side"
-            :reactions= "take.reactions"
+            :userReaction= handleUserReactionCheck(take.take_id)
             :likes = "take.likes"
             :dislikes = "take.dislikes"
             @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"

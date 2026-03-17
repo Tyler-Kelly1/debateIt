@@ -24,7 +24,7 @@ export const TakeServices = {
             .on(
                 'postgres_changes',
                 {
-                    event: '*',    // listen for any change
+                    event: 'INSERT',    // listen for any change
                     schema: 'public',
                     table: 'Takes'      // The table to watch
                 },
@@ -56,6 +56,7 @@ export const TakeServices = {
             .subscribe();
 
     },
+
 
     async loadAllTakesAndTopic(): Promise<any> {
 

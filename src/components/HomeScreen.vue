@@ -84,8 +84,6 @@ async function updateData() {
 
         }, {})
 
-        console.log(formattedReactions)
-
         const formattedNewTake = {
               take_id: newTake.take_id,
               message: newTake.message,
@@ -130,7 +128,6 @@ async function updateData() {
 onMounted(async () => {
 
   //Login
-  AuthService.login("kjames@gmail.com", "password123")
   const session = await AuthService.getUserSession()
   userID.value = session.user.id;
 
@@ -155,12 +152,80 @@ onMounted(async () => {
 
   }
 
+  const bucketReaction = (newReaction) => {
+
+    const takeId = newReaction.take_id;
+    const userId = newReaction.user_id;
+    let newType = newReaction.type;
+
+    // 1. Correctly locate the parent take from either bucket
+    let parentTake = agreeTakes[takeId] || disagreeTakes[takeId];
+
+    if (!parentTake) {
+      console.warn("Reaction received for a take that isn't loaded yet.");
+      return;
+    }
+
+    // 2. Check the existing state for THIS user on THIS take
+    const existingType = parentTake.reactions[userId];
+
+    // Check if the new reaction belongs to the current user
+
+
+      if (existingType) {
+
+        //Means remove the appropriate reaction
+        if (newType === "None"){
+
+          if(existingType === "Like"){
+            parentTake.likes--;
+          }
+          else{
+            parentTake.dislikes--;
+          }
+
+        }
+
+        else if (newType === "Like" && existingType === "Dislike"){
+          parentTake.likes++;
+          parentTake.dislikes--;
+        }
+
+        else if(newType === "Dislike" && existingType ==="Like") {
+          parentTake.dislikes++;
+          parentTake.likes--;
+        }
+
+        else if(newType === "Like" && existingType === "None"){
+          parentTake.likes++
+        }
+
+        else{
+          parentTake.dislikes++;
+        }
+
+
+      } else {
+        // SCENARIO: Brand New Reaction
+        if (newType === "Like") {
+          parentTake.likes++;
+        } else {
+          parentTake.dislikes++;
+        }
+      }
+
+
+
+    // 3. Update the reaction map so the next trigger knows the "old" state
+    parentTake.reactions[userId] = newType;
+
+  };
+
   // 2. Set up the Realtime Listener for Takes
   TakeServices.subscribeToTakesUpdates(bucketTake)
 
-  // 3. Set up the Realtime Listner for Reactions
- //ReactionService.submitNewReaction(b)
-
+  // 3. Set up the Realtime Listener for Reactions
+  ReactionService.subscribeToReactionsUpdates(bucketReaction)
 
 });
 
@@ -192,9 +257,10 @@ async function handleSubmitTake(newTakeMessage) {
 async function handleReaction(reaction) {
 
   //First unpack
-  const reactionType = reaction.type;
+  let reactionType = reaction.type;
   const takeSide = reaction.takeSide;
   const take_id = reaction.take_id;
+
 
   //Need to check if the reaction already exist
 
@@ -210,14 +276,19 @@ async function handleReaction(reaction) {
   //if exist
   if(take.reactions[userID.value]) {
 
+    // check if the same as current, if so this means remove reaction
+    let currentType = agreeTakes[take_id] || disagreeTakes[take_id];
+    currentType = currentType.reactions[userID.value];
+
+    if(reactionType === currentType){
+      reactionType = "None"
+    }
+
     await ReactionService.updateReaction({
       user_id: userID.value,
       take_id: take_id,
       type: reactionType
-    }).then(
-        take.reactions[userID.value] = reactionType
-    )
-
+    })
 
   }
   else{
@@ -226,9 +297,7 @@ async function handleReaction(reaction) {
       user_id: userID.value,
       take_id: take_id,
       type: reactionType
-    }).then(
-        take.reactions[userID.value] = reactionType
-    )
+    })
 
   }
 
@@ -247,8 +316,9 @@ async function handleReaction(reaction) {
     ></NewTake>
 
     <TakesBox
-        :agreedComments="agreeTakes"
-        :disagreedComments="disagreeTakes"
+        :user_ID = userID
+        :agreeTakes="agreeTakes"
+        :disagreeTakes="disagreeTakes"
         @newReaction="handleReaction"
     ></TakesBox>
   </div>
