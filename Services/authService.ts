@@ -30,8 +30,7 @@ export const AuthService = {
         })
         if (error) throw error
 
-        console.log("Logged In Successfully")
-
+        return true
 
 
     },
@@ -56,9 +55,20 @@ export const AuthService = {
     async getUserSession() {
 
         const { data, error } = await supabase.auth.getSession();
+
         if (error) throw error;
+        
         return data.session;
 
     },
+
+    async getUserId(){
+
+        const {data, error} =  await supabase.auth.getUser();
+
+        if (error) throw error;
+
+        return data.user.id
+    }
 
 }

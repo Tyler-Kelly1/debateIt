@@ -57,7 +57,6 @@ export const TakeServices = {
 
     },
 
-
     async loadAllTakesAndTopic(): Promise<any> {
 
         // We are selecting everything (*) from Debates and the related 'Takes' table.
@@ -77,9 +76,12 @@ export const TakeServices = {
                 )
             )
             `)
+            .eq("is_active", true)
+
 
         //Error handing
         if(error) throw Error("Connection to DB Failed! Could not load all takes! Function: loadAlLTakes()");
+
 
         return {
             topic : data[0].topic,
@@ -87,6 +89,23 @@ export const TakeServices = {
         }
 
 
+
+    },
+
+    async getTopic(){
+
+        const {data, error} = await supabase
+
+            .from('Debates')
+            .select(``)
+            .eq('is_active', true)
+
+        if (error) throw Error("Connection to DB Failed! Could not load topic! Function: getTopic()");
+
+        return {
+            topic: data[0].topic,
+            expiration_date: data[0].Expiration_Date
+        }
 
     },
 
@@ -104,4 +123,6 @@ export const TakeServices = {
     }
 
 }
+
+TakeServices.getTopic().then(data => console.log(data))
 

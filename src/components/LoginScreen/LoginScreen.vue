@@ -1,25 +1,28 @@
-<script setup lang="ts">
-  import {ref} from "vue";
+<script setup lang="js">
+import {onMounted, ref} from "vue";
   import {AuthService} from "../../../Services/authService";
-  import CreateUser from "./CreateUser.vue";
+  import CreateUser from "../SignUpPage/CreateUser.vue";
+  import {useRouter} from "vue-router";
 
   const hasAccount = ref(true)
   const email = ref("")
   const password = ref("")
+const router = useRouter()
 
 
 
-  function createUser(): void {
+  function createUser() {
     hasAccount.value = false;
   }
 
-  function handleLogin(){
+  async function handleLogin(){
 
     // Attempt to log in
-
     try{
 
-      AuthService.login(email.value, password.value)
+      await AuthService.login(email.value, password.value)
+
+      await router.replace("/ChooseSide")
 
     }
     catch(error){
@@ -39,16 +42,19 @@
 
     <div class="credentials">
 
-      <input placeholder="Username"
-             style="width: 50%">
+      <form>
 
-      <input placeholder="Email"
-             v-model="email"
-             style="width: 50%">
+        <input placeholder="Username"
+               style="width: 50%">
 
-      <input placeholder="Password"
-             v-model:="password"
-             style="width: 50%">
+        <input placeholder="Email"
+               v-model="email"
+               style="width: 50%">
+
+        <input placeholder="Password"
+               v-model:="password"
+               style="width: 50%">
+      </form>
 
       <button
       @click="handleLogin"

@@ -1,33 +1,74 @@
-<script setup lang="ts">
-import { ref } from "vue";
+<script setup lang="js">
+import {onMounted, ref} from "vue";
+import {TakeServices as TakeService, TakeServices} from "../../../Services/takesService";
+import {AuthService} from "../../../Services/authService.ts";
+import {useRouter} from "vue-router";
 
-// 1. DATA BLUEPRINT
-// Even though this is the input component, we define what a 'Take' looks like
-// to ensure consistency when we send it to the parent.
-interface CommentData {
-  id: string;
-  content: string;
-  votes: number;
-}
-
-const props = defineProps({
-
-  debateTopic: {
-    type: String,
-    required: true,
-  }
-})
 
 // 2. LOCAL STATE (Internal Variables)
 // 'take' stores what the user is currently typing in the textarea.
 const take = ref('')
+const debateTopic = ref('Loading Topic...')
+const userID = ref('')
+const userSide = ref(null)
+const router = useRouter()
 
-// 3. EMIT DEFINITION
-// This defines the "megaphone" this component uses to talk to the parent.
-// We are telling Vue that this component is allowed to shout an event called 'submitTake'.
-const emit = defineEmits([
-  'submitTake'
-])
+// load all important information
+onMounted(async () => {
+
+  try {
+
+    //Get Users ID (this is fine, do not fix later)
+    userID.value = await AuthService.getUserId()
+
+    //Get the topic
+    TakeService.getTopic().then(data=>{debateTopic.value=data.topic})
+
+    //Get Users Side for now (FIX LATER)
+    userSide.value = sessionStorage.getItem("side");
+
+    // check to make sure side hasn't been modified
+    // Assume agree for now
+    if (typeof(userID.value) !== 'boolean'){
+      userSide.value = true;
+    }
+
+
+
+  } catch (err) {
+
+  }
+
+
+})
+
+
+// 4. SUBMISSION LOGIC
+async function handleSubmitTake(newTake) {
+
+  // Freaking love this line of code so elegant
+  const usersSelectedSide = userSide.value === "true";
+
+  const dBFormattedTake = {
+
+    message: newTake,
+    user_id: userID.value,
+    topic: debateTopic.value,
+    side: usersSelectedSide
+
+  }
+
+  // Error handling if failed to insert new take
+  try{
+    await TakeServices.submitNewTake(dBFormattedTake)
+    await router.push("/")
+  }
+  catch(err){
+    console.log(err)
+  }
+
+}
+
 
 // 4. SUBMISSION LOGIC
 function handleTakeSubmit() {
@@ -38,12 +79,7 @@ function handleTakeSubmit() {
     // Argument 1: The name of the event ('submitTake')
     // Argument 2: The actual data object (The "Take")
     // Argument 3: The side chosen (The boolean from our toggle)
-
-    emit('submitTake',
-        {
-          message: take.value,
-        }
-    )
+    handleSubmitTake(take.value)
 
     // RESET: Clear the text area after submitting so the user can type a new one
     take.value = ''
@@ -53,8 +89,7 @@ function handleTakeSubmit() {
 
 <template>
   <div class="main">
-    <h3 v-if="props.debateTopic">{{props.debateTopic}}</h3>
-    <h3 v-else>FAILED TO LOAD TOPIC</h3>
+    <h3>{{debateTopic}}</h3>
 
     <div class="inputWrapper">
       <textarea

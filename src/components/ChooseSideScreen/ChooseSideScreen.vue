@@ -1,19 +1,28 @@
 <script setup lang="ts">
 
-const props = defineProps({
+import {useRouter} from "vue-router";
+import {TakeServices} from "../../../Services/takesService";
+import {onMounted, ref} from "vue";
 
-  debateTopic: {
-    type: String,
-    required: true,
-  }
+
+const router = useRouter()
+const topic = ref('Loading Topic...')
+
+onMounted(() => {
+
+  TakeServices.getTopic().then(
+      data => {
+        topic.value = data.topic
+      }
+  )
+
 
 })
 
-const emit = defineEmits(["updateScreen"])
-
 function handleChoice(side:boolean) {
   sessionStorage["side"] = side;
-  emit("updateScreen");
+  router.push("/SubmitTake")
+
 }
 
 </script>
@@ -23,7 +32,7 @@ function handleChoice(side:boolean) {
 
   <div class="mainContainer">
 
-    <h1>{{props.debateTopic}}</h1>
+    <h1>{{topic}}</h1>
 
     <div class="buttons">
       <button

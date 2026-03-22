@@ -1,28 +1,23 @@
 <script setup>
 // 1. IMPORTING REQUISITES
-import TakesBox from "./homeComp/CommentComp/TakesBox.vue";
-import NewTake from "./homeComp/NewTakeArea/NewTake.vue";
-import StatBox from "./homeComp/StatsComp/StatBox.vue";
+import TakesBox from "./CommentComp/TakesBox.vue";
+import StatBox from "./StatsComp/StatBox.vue";
+import CountDown from "./TimerComp/CountDown.vue"
+
 
 // 'onMounted' is a Lifecycle Hook. It runs code as soon as the component appears on screen.
 import {computed, onMounted, reactive, ref} from "vue";
 
-// This is your connection to the outside world (the database)
-import ChooseSideScreen from "./ChooseSidePage/ChooseSideScreen.vue"
-import newTake from "./homeComp/NewTakeArea/NewTake.vue"
-
 //Services
-import {AuthService} from "../../Services/authService.ts";
-import {TakeServices} from "../../Services/takesService.ts";
-import {ReactionService} from "../../Services/reactionService.ts";
+import {AuthService} from "../../../Services/authService.ts";
+import {TakeServices} from "../../../Services/takesService.ts";
+import {ReactionService} from "../../../Services/reactionService.ts";
 
 
 // 2. DATA STATE (The "Local Memory")
 // We use 'reactive' so that when the database returns data, the UI updates instantly.
 const agreeTakes = reactive({});
 const disagreeTakes = reactive({});
-
-const userSide = ref(sessionStorage.getItem("side"));
 const userID = ref("")
 
 // Stores the numerical statistics (e.g., total vote counts)
@@ -50,14 +45,6 @@ const statsData = computed(() => {
 const debateTopic = reactive({
   "topic": "Loading..."
 })
-
-function handleSideChosen(){
-  // 1. Get the value from storage (make sure you use the same one: session vs local)
-  // 2. Update the reactive ref. This is the "Trigger" for v-if/v-else
-  userSide.value = sessionStorage.getItem("side");
-
-
-}
 
 // 3. DATABASE LOGIC (The "Async" Function)
 // 'async' tells Vue this function will take time to finish (waiting for the internet).
@@ -128,8 +115,7 @@ async function updateData() {
 onMounted(async () => {
 
   //Login
-  const session = await AuthService.getUserSession()
-  userID.value = session.user.id;
+  userID.value = await AuthService.getUserId();
 
   // 1. Initial load of existing data
   await updateData();
@@ -229,30 +215,6 @@ onMounted(async () => {
 
 });
 
-// 4. SUBMISSION LOGIC
-async function handleSubmitTake(newTakeMessage) {
-
-  // Freaking love this line of code so elegant
-  const usersSelectedSide = userSide.value === "true";
-
-  const dBFormattedTake = {
-
-    message: newTakeMessage.message,
-    user_id: userID.value,
-    topic: debateTopic.topic,
-    side: usersSelectedSide
-
-  }
-
-  // Error handling if failed to insert new take
-  try{
-    await TakeServices.submitNewTake(dBFormattedTake)
-  }
-  catch(err){
-    console.log(err)
-  }
-
-}
 
 async function handleReaction(reaction) {
 
@@ -263,6 +225,7 @@ async function handleReaction(reaction) {
 
 
   //Need to check if the reaction already exist
+
 
   let take;
 
@@ -307,30 +270,21 @@ async function handleReaction(reaction) {
 
 <template>
 
-  <div v-if= "userSide !== null " class="home">
-    <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
 
-    <NewTake @submitTake="handleSubmitTake"
-             :debateTopic="debateTopic.topic"
-             :userSide="userSide"
-    ></NewTake>
 
-    <TakesBox
+  {{debateTopic.topic}}
+
+  <CountDown></CountDown>
+
+  <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
+
+  <TakesBox
         :user_ID = userID
         :agreeTakes="agreeTakes"
         :disagreeTakes="disagreeTakes"
         @newReaction="handleReaction"
-    ></TakesBox>
-  </div>
+  ></TakesBox>
 
-  <div class="chooseSide" v-else>
-
-    <ChooseSideScreen
-        :debateTopic= "debateTopic.topic"
-        @updateScreen = "handleSideChosen"
-    ></ChooseSideScreen>
-
-  </div>
 
 </template>
 

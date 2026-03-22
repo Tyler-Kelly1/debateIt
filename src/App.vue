@@ -1,8 +1,7 @@
 <script setup>
 
-import HomeScreen from './components/HomeScreen.vue'
-import LoginScreen from "./components/LoginComp/LoginScreen.vue";
 import {AuthService} from '/Services/authService.ts'
+
 
 import {ref} from "vue";
 
@@ -11,20 +10,20 @@ const loggedIn = ref(false);
 
 //Check if logged in
 AuthService.isLoggedIn().then(status => {loggedIn.value = status});
-console.log(loggedIn.value);
 
 </script>
 
 <template>
 
-  <div v-if="loggedIn">
-    <HomeScreen/>
-
+  <div id = "nav">
+    <router-link to="/"></router-link>
+    <router-link to="/ChooseSide"></router-link>
+    <router-link to="/SubmitTake"></router-link>
+    <router-link to="/Login"></router-link>
   </div>
 
-  <div v-else>
-    <LoginScreen/>
-  </div>
+  <router-view/>
+
 
 </template>
 
