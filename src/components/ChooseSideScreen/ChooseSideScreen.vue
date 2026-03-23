@@ -2,11 +2,14 @@
 
 import {useRouter} from "vue-router";
 import {TakeServices} from "../../../Services/takesService";
+import {UserService} from "../../../Services/userService";
+import {AuthService} from "../../../Services/authService";
 import {onMounted, ref} from "vue";
 
 
 const router = useRouter()
 const topic = ref('Loading Topic...')
+const user_id = ref(AuthService.getUserId())
 
 onMounted(() => {
 
@@ -20,7 +23,13 @@ onMounted(() => {
 })
 
 function handleChoice(side:boolean) {
-  sessionStorage["side"] = side;
+
+
+  UserService.updateSide({
+    id: user_id,
+    side: side
+  })
+
   router.push("/SubmitTake")
 
 }
