@@ -3,6 +3,8 @@ import {onMounted, ref} from "vue";
 import {TakeServices as TakeService, TakeServices} from "../../../Services/takesService";
 import {AuthService} from "../../../Services/authService.ts";
 import {useRouter} from "vue-router";
+import {UserService} from "../../../Services/userService.ts";
+
 
 
 // 2. LOCAL STATE (Internal Variables)
@@ -26,9 +28,10 @@ onMounted(async () => {
     //Get the topic
     TakeService.getTopic().then(data=>{debateTopic.value=data.topic})
 
-    //Get Users Side for now (FIX LATER)
-    userSide.value = sessionStorage.getItem("side");
+    //Get Users Side for now (FIXED MAYBE)
+    userSide.value = UserService.getUserSide();
     userSide.value = userSide.value === "true"
+
 
     // check to make sure side hasn't been modified
     // Assume agree for now

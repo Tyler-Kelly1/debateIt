@@ -8,7 +8,9 @@ import {ref} from "vue";
 const loggedIn = ref(false);
 
 //Check if logged in
+
 AuthService.isLoggedIn().then(status => {loggedIn.value = status});
+
 
 </script>
 
