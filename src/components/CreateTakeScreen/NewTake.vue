@@ -29,7 +29,7 @@ onMounted(async () => {
     TakeService.getTopic().then(data=>{debateTopic.value=data.topic})
 
     //Get Users Side for now (FIXED MAYBE)
-    userSide.value = UserService.getUserSide();
+    userSide.value = sessionStorage.getItem("side")
     userSide.value = userSide.value === "true"
 
 

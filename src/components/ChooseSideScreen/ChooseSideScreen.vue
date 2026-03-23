@@ -2,7 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {TakeServices} from "../../../Services/takesService";
-import {UserService} from "../../../Services/userService";
+//import {UserService} from "../../../Services/userService";
 import {AuthService} from "../../../Services/authService";
 import {onMounted, ref} from "vue";
 import CardSwipe from "./CardSwipe.vue";
@@ -11,9 +11,13 @@ import CardSwipe from "./CardSwipe.vue";
 const router = useRouter()
 const topic = ref('Loading Topic...')
 const loadingNextPage = ref(false)
-const user_id = ref(AuthService.getUserId())
+const user_id = ref("")
 
 onMounted(() => {
+
+  AuthService.getUserId().then(user => {
+    user_id.value = user
+  })
 
   TakeServices.getTopic().then(
       data => {
@@ -25,14 +29,15 @@ onMounted(() => {
 })
 
 function handleChoice(side) {
+
   sessionStorage["side"] = side;
 
   loadingNextPage.value = true
 
-  UserService.updateSide({
-    id: user_id,
-    side: side
-  })
+  //UserService.updateSide({
+  //  id: user_id,
+  //  side: side
+  //})
 
 
   setTimeout( () => {
