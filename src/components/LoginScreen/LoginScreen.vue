@@ -7,7 +7,7 @@ import {onMounted, ref} from "vue";
   const hasAccount = ref(true)
   const email = ref("")
   const password = ref("")
-const router = useRouter()
+  const router = useRouter()
 
 
 
@@ -43,9 +43,6 @@ const router = useRouter()
     <div class="credentials">
 
       <form>
-
-        <input placeholder="Username"
-               style="width: 50%">
 
         <input placeholder="Email"
                v-model="email"

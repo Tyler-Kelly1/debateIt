@@ -48,74 +48,49 @@ function handleReaction(status){
 </script>
 
 <template>
-  <div class="comment">
-    <h4>ID: {{props.take_id}}</h4>
-    <p>{{props.message}}</p>
-    <div
-        class = "vote-box"
-    >
-      <div
-          :class="userReaction === 'Like' ? 'like-box-lit' : 'like-box'"
-          @click="handleReaction('Like')"
+  <div class="bg-white border-2 border-on-background p-4 flex flex-col gap-1.5">
+    <div class="flex justify-between items-center">
+      <span class="text-[6px] font-bold tracking-widest text-on-surface-variant">Post:{{take_id}}</span>
+    </div>
+    <p class="text-[13px] font-medium leading-tight tracking-tight">
+      {{message}}
+    </p>
+    <div class="flex gap-2 pt-2 border-t border-surface-container text-[0.8rem]">
+      <button @click="handleReaction('Like')"
+              :class="userReaction === 'Like' ? 'filled-icon-agree' : 'unfilled-icon'"
+              class="flex items-center gap-0.5">
+        <span  class="material-symbols-outlined">thumb_up</span> <span>{{likes}}</span>
+      </button>
+      <button @click="handleReaction('Dislike')"
+              class="flex items-center gap-0.5 text-[0.2rem]"
+              :class="userReaction === 'Dislike' ? 'filled-icon-disagree' : 'unfilled-icon'"
       >
-        ^ {{props.likes}}
-      </div>
-
-      <div
-          :class="userReaction === 'Dislike' ? 'dislike-box-lit' : 'dislike-box'"
-          @click="handleReaction('Dislike')"
-      >
-        v {{props.dislikes}}
-      </div>
-
+        <span class="material-symbols-outlined">thumb_down</span> {{dislikes}}
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
 
-.comment{
-  display: block;
-  border: 1px solid #ccc;
+.unfilled-icon {
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 2;
+  font-size: 0.8rem;
 }
 
-.comment h4{
-  font-size: 0.5rem;
-  margin-top: 0.1rem;
-  margin-bottom: 0.1rem;
-  border: #00d9ff solid 1px;
+.filled-icon-agree{
+  font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 2;
+  color: darkblue;
+  font-size: 0.8rem;
 }
 
-.comment p{
-  margin-top: 0;
-  margin-bottom: 0.2rem;
+
+.filled-icon-disagree{
+  font-variation-settings: 'FILL' 1, 'wght' 200, 'GRAD' 0, 'opsz' 2;
+  color: darkred;
+  font-size: 0.8rem;
 }
 
-.vote-box {
-  margin-left: auto;
-  width: fit-content;
-  padding: 4px 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  background: #ff0000; /* Default (Unlit) */
-  display: flex;
-}
-
-.like-box{
-  background-color: green;
-}
-
-.dislike-box{
-  background-color: darkred;
-}
-
-.like-box-lit{
-  background-color: lightgreen;
-}
-
-.dislike-box-lit{
-  background-color: lightcoral;
-}
 
 
 </style>

@@ -1,12 +1,14 @@
-<script setup lang="ts">
+<script setup lang="js">
 
 import {useRouter} from "vue-router";
 import {TakeServices} from "../../../Services/takesService";
 import {onMounted, ref} from "vue";
+import CardSwipe from "./CardSwipe.vue";
 
 
 const router = useRouter()
 const topic = ref('Loading Topic...')
+const loadingNextPage = ref(false)
 
 onMounted(() => {
 
@@ -19,9 +21,16 @@ onMounted(() => {
 
 })
 
-function handleChoice(side:boolean) {
+function handleChoice(side) {
   sessionStorage["side"] = side;
-  router.push("/SubmitTake")
+
+  loadingNextPage.value = true
+
+
+  setTimeout( () => {
+      router.push("/SubmitTake")
+      }
+      , 300)
 
 }
 
@@ -29,53 +38,25 @@ function handleChoice(side:boolean) {
 
 <template>
 
+  <body :class="{ 'opacity-0': loadingNextPage }" class="bg-brutalist-white text-brutalist-black min-h-screen flex flex-col items-center font-sans transition-opacity duration-500 ease-in-out">
 
-  <div class="mainContainer">
+    <section class="w-full text-center md:mt-40 mt-20 mb-10 [@media(max-height:680px)]:mb-3 [@media(max-height:680px)]:mt-5">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="text-5xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
+          {{topic}}
+        </h1>
+      </div>
+    </section>
 
-    <h1>{{topic}}</h1>
-
-    <div class="buttons">
-      <button
-          @click="handleChoice(true)"
-      >
-        Agree
-      </button>
-
-      <button
-          @click="handleChoice(false)"
-      >
-        Disagree
-      </button>
+    <div class="">
+      <CardSwipe @onSwipe="handleChoice"></CardSwipe>
     </div>
 
-
-  </div>
-
+  </body>
 
 </template>
 
 <style scoped>
 
-.mainContainer{
-  display:flex;
-  flex-direction: column;
-  background: #fff;
-  width: 90vw;
-  height: 100vh;
-  margin: 0 auto;
-  color: black;
-}
-
-h1 {
-  margin-top: 20%;
-  text-align: center;
-}
-
-.buttons{
-  margin: 0 auto auto;
-}
-button{
-  margin: 5px;
-}
 
 </style>

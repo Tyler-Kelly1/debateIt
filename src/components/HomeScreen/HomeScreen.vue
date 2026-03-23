@@ -270,9 +270,14 @@ async function handleReaction(reaction) {
 
 <template>
 
-
-
-  {{debateTopic.topic}}
+  <div class="w-full mt-2">
+    <div class="flex flex-col">
+      <span class="text-[10px] font-bold tracking-[0.3em]">Today's Question</span>
+      <h2 class="text-3xl md:text-5xl font-black leading-[0.95] tracking-tighter uppercase pl-4 py-2">
+        {{debateTopic.topic}}
+      </h2>
+    </div>
+  </div>
 
   <CountDown></CountDown>
 

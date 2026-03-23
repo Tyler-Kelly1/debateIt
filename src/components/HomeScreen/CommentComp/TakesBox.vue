@@ -91,6 +91,8 @@ function handleUserReactionCheck(takeId){
 </script>
 
 <template>
+  <div class="bg-surface text-on-surface min-h-screen flex flex-col gap-2">
+
   <div class="filterBar">
 
     <div @click="updateSortingFilter('likes')">
@@ -103,8 +105,14 @@ function handleUserReactionCheck(takeId){
 
   </div>
 
-  <div class="container">
-    <div class="col agreeCol">
+  <div class="flex-1 flex flex-col gap-6 mb-8 overflow-x-auto">
+
+    <div class="flex items-center justify-between border-b-2 border-primary pb-1">
+      <h3 class="text-lg font-black tracking-tighter italic uppercase text-primary">Affirmative Feed</h3>
+      <span class="text-[10px] font-bold bg-primary text-white px-2 pt-3">{{sortedAgree.length}}</span>
+    </div>
+
+    <div class="flex flex-col gap-2 overflow-y-auto inner-scroll max-h-[300px]">
       <div v-for="take in sortedAgree" :key="take.take_id">
 
         <Take
@@ -120,7 +128,15 @@ function handleUserReactionCheck(takeId){
       </div>
     </div>
 
-    <div class="col disagreeCol">
+    <div class="flex items-center justify-between border-b-2 border-b-disagree pb-1">
+      <h3 class="text-lg font-black tracking-tighter italic uppercase text-disagree">Dissent Feed</h3>
+      <span class="text-[10px] font-bold bg-disagree text-white px-2 py-0.5">{{sortedDisagree.length}}</span>
+    </div>
+
+    <div class="flex flex-col gap-4 overflow-y-auto inner-scroll max-h-[300px]">
+
+
+
       <div v-for="take in sortedDisagree" :key="take.take_id">
         <Take
             :take_id = "take.take_id"
@@ -135,6 +151,8 @@ function handleUserReactionCheck(takeId){
         />
       </div>
     </div>
+  </div>
+
   </div>
 </template>
 

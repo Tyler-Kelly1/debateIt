@@ -1,9 +1,8 @@
 <script setup>
 
 import {AuthService} from '/Services/authService.ts'
-
-
 import {ref} from "vue";
+
 
 
 const loggedIn = ref(false);
@@ -23,6 +22,7 @@ AuthService.isLoggedIn().then(status => {loggedIn.value = status});
   </div>
 
   <router-view/>
+
 
 
 </template>
