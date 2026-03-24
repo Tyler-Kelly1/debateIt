@@ -2,7 +2,7 @@
 
 import {useRouter} from "vue-router";
 import {TakeServices} from "../../../Services/takesService";
-//import {UserService} from "../../../Services/userService";
+import {UserService} from "../../../Services/userService";
 import {AuthService} from "../../../Services/authService";
 import {onMounted, ref} from "vue";
 import CardSwipe from "./CardSwipe.vue";
@@ -30,14 +30,10 @@ onMounted(() => {
 
 function handleChoice(side) {
 
-  sessionStorage["side"] = side;
-
   loadingNextPage.value = true
 
-  //UserService.updateSide({
-  //  id: user_id,
-  //  side: side
-  //})
+  // Update side
+  UserService.updateSide(user_id.value, side)
 
 
   setTimeout( () => {

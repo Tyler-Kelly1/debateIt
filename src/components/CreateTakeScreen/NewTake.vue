@@ -28,10 +28,8 @@ onMounted(async () => {
     //Get the topic
     TakeService.getTopic().then(data=>{debateTopic.value=data.topic})
 
-    //Get Users Side for now (FIXED MAYBE)
-    userSide.value = sessionStorage.getItem("side")
-    userSide.value = userSide.value === "true"
-
+    //Get Users Side
+    UserService.getUserSide(userID.value).then(data=>{userSide.value = data})
 
     // check to make sure side hasn't been modified
     // Assume agree for now
