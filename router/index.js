@@ -51,14 +51,19 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
 
     router.beforeEach(async (to, from) => {
+
         const loggedIn = await AuthService.isLoggedIn();
+
+        console.log(loggedIn);
 
         // 1. PUBLIC ACCESS CHECK
         // Allow users to reach Login or SignUp if they aren't logged in.
         if (!loggedIn) {
+
             if (to.name !== 'login' && to.name !== 'NewUser') {
                 return { name: 'login' };
             }
+
             return true; // Let them stay on Login/SignUp
         }
 

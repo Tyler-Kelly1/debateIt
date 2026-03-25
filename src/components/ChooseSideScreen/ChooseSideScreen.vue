@@ -14,25 +14,32 @@ const loadingNextPage = ref(false)
 const user_id = ref("")
 const demo = ref(false)
 
-onMounted(() => {
+onMounted(async () => {
 
+
+  //Checking if user is even logged in
   try{
 
-    //Checking if user is even logged in
-    AuthService.getUserId().then(user => {
+    await AuthService.getUserId().then(user => {
       user_id.value = user
     })
-
 
   }
   catch(err){
 
-    //if not, be prepared to send them to login after swipe
-    // still have to give them the illusion of choice
-    demo.value = true
+      //if not, be prepared to send them to login after swipe
+      // still have to give them the illusion of choice
+      demo.value = true
 
 
   }
+
+
+
+
+
+
+
 
 
   TakeServices.getTopic().then(
@@ -70,7 +77,10 @@ async function handleChoice(side) {
 
   }
   else{
-    await router.replace("/login");
+
+    setTimeout(() => {
+      router.replace("/login");
+    }, 300);
   }
 
 }

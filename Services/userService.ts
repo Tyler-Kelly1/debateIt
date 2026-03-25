@@ -32,7 +32,6 @@ export const UserService = {
     },
 
 
-
     async doesUserHaveTakeAndSide(userId: string){
 
         const {data, error} =  await supabase
