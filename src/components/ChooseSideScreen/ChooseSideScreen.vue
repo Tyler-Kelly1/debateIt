@@ -16,6 +16,8 @@ const demo = ref(false)
 
 onMounted(async () => {
 
+  await new Promise(resolve => setTimeout(resolve, 100));
+
 
   //Checking if user is even logged in
   try{
@@ -33,13 +35,6 @@ onMounted(async () => {
 
 
   }
-
-
-
-
-
-
-
 
 
   TakeServices.getTopic().then(
