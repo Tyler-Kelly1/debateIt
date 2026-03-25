@@ -12,12 +12,27 @@ const router = useRouter()
 const topic = ref('Loading Topic...')
 const loadingNextPage = ref(false)
 const user_id = ref("")
+const demo = ref(false)
 
 onMounted(() => {
 
-  AuthService.getUserId().then(user => {
-    user_id.value = user
-  })
+  try{
+
+    //Checking if user is even logged in
+    AuthService.getUserId().then(user => {
+      user_id.value = user
+    })
+
+
+  }
+  catch(err){
+
+    //if not, be prepared to send them to login after swipe
+    // still have to give them the illusion of choice
+
+
+  }
+
 
   TakeServices.getTopic().then(
       data => {
@@ -31,20 +46,32 @@ onMounted(() => {
 async function handleChoice(side) {
   loadingNextPage.value = true;
 
-  try {
-    // 1. Actually WAIT for the database to finish
-    // This ensures the Navigation Guard sees 'hasSide = true'
-    await UserService.updateSide(user_id.value, side);
 
-    // 2. Short delay for the "fade out" animation effect
-    setTimeout(() => {
-      router.replace("/SubmitTake");
-    }, 300);
 
-  } catch (error) {
-    loadingNextPage.value = false;
-    console.error("Update failed:", error);
+  // If user is logged in aka, this is for real.
+  if(!demo.value){
+
+    try {
+      // 1. Actually WAIT for the database to finish
+      // This ensures the Navigation Guard sees 'hasSide = true'
+      await UserService.updateSide(user_id.value, side);
+
+      // 2. Short delay for the "fade out" animation effect
+      setTimeout(() => {
+        router.replace("/SubmitTake");
+      }, 300);
+
+    } catch (error) {
+      loadingNextPage.value = false;
+
+      await router.replace("/ChooseSide");
+    }
+
   }
+  else{
+    await router.replace("/login");
+  }
+
 }
 
 </script>
