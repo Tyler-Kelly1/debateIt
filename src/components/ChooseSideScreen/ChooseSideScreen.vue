@@ -29,6 +29,7 @@ onMounted(() => {
 
     //if not, be prepared to send them to login after swipe
     // still have to give them the illusion of choice
+    demo.value = true
 
 
   }
