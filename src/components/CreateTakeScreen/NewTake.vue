@@ -111,7 +111,7 @@ async function handleSubmitTake() {
   </div>
 
 
-  <body :class="{ 'opacity-0': loadingNextPage }" v-if="userSide !== null && debateTopic" class="bg-surface overflow-x-hidden min-h-screen flex items-center justify-center p-6 md:p-12 transition-opacity duration-600 ease-in-out">
+  <div :class="{ 'opacity-0': loadingNextPage }" v-if="userSide !== null && debateTopic" class="bg-surface overflow-x-hidden min-h-screen flex items-center justify-center p-6 md:p-12 transition-opacity duration-600 ease-in-out">
   <main class="w-full max-w-4xl mx-auto flex flex-col justify-center min-h-[80vh]">
     <!-- Choice Indicator -->
     <div class="mb-8 flex items-center gap-3">
@@ -165,7 +165,7 @@ async function handleSubmitTake() {
       </div>
     </div>
   </main>
-  </body>
+  </div>
 </template>
 
 <style scoped>

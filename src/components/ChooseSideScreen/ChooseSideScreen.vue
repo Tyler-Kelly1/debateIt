@@ -89,7 +89,7 @@ async function handleChoice(side) {
 
 <template>
 
-  <body :class="{ 'opacity-0': loadingNextPage }" class="bg-brutalist-white text-brutalist-black min-h-screen flex flex-col items-center font-sans transition-opacity duration-500 ease-in-out">
+  <div :class="{ 'opacity-0': loadingNextPage }" class="bg-brutalist-white text-brutalist-black min-h-screen flex flex-col items-center font-sans transition-opacity duration-500 ease-in-out">
 
     <section class="w-full text-center md:mt-40 mt-20 mb-10 [@media(max-height:680px)]:mb-3 [@media(max-height:680px)]:mt-5">
       <div class="max-w-4xl mx-auto">
@@ -103,7 +103,7 @@ async function handleChoice(side) {
       <CardSwipe @onSwipe="handleChoice"></CardSwipe>
     </div>
 
-  </body>
+  </div>
 
 </template>
 
