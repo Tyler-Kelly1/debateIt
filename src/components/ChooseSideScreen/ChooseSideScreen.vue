@@ -28,19 +28,23 @@ onMounted(() => {
 
 })
 
-function handleChoice(side) {
+async function handleChoice(side) {
+  loadingNextPage.value = true;
 
-  loadingNextPage.value = true
+  try {
+    // 1. Actually WAIT for the database to finish
+    // This ensures the Navigation Guard sees 'hasSide = true'
+    await UserService.updateSide(user_id.value, side);
 
-  // Update side
-  UserService.updateSide(user_id.value, side)
+    // 2. Short delay for the "fade out" animation effect
+    setTimeout(() => {
+      router.replace("/SubmitTake");
+    }, 300);
 
-
-  setTimeout( () => {
-      router.replace("/SubmitTake")
-      }
-      , 300)
-
+  } catch (error) {
+    loadingNextPage.value = false;
+    console.error("Update failed:", error);
+  }
 }
 
 </script>
