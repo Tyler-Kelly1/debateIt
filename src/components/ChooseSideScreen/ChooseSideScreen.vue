@@ -37,7 +37,7 @@ function handleChoice(side) {
 
 
   setTimeout( () => {
-      router.push("/SubmitTake")
+      router.replace("/SubmitTake")
       }
       , 300)
 
