@@ -4,7 +4,7 @@ import {TakeServices as TakeService, TakeServices} from "../../../Services/takes
 import {AuthService} from "../../../Services/authService.ts";
 import {useRouter} from "vue-router";
 import {UserService} from "../../../Services/userService.ts";
-
+import ErrorBox from "../GeneralComps/ErrorBox.vue"
 
 
 // 2. LOCAL STATE (Internal Variables)
@@ -15,6 +15,9 @@ const userID = ref('')
 const userSide = ref(null)
 const router = useRouter()
 const loadingNextPage = ref(false)
+
+const showError = ref(false);
+const errorCode = ref("")
 
 
 // load all important information
@@ -30,6 +33,9 @@ onMounted(async () => {
 
     //Get Users Side
     UserService.getUserSide(userID.value).then(data=>{userSide.value = data})
+
+    UserService.doesUserHaveTakeAndSide(userID.value).then(data=>{console.log(data)})
+
 
     // check to make sure side hasn't been modified
     // Assume agree for now
@@ -50,6 +56,20 @@ onMounted(async () => {
 // 4. SUBMISSION LOGIC
 async function handleSubmitTake() {
 
+
+  //first have to check if users has already submitted a take
+  let userSubmittedTake = false;
+
+  await UserService.doesUserHaveTakeAndSide(userID.value).then(data=>{
+    userSubmittedTake = data.hasTake
+  })
+
+  if(userSubmittedTake){
+    errorCode.value = "User has already submitted a take."
+    showError.value = true
+    return;
+  }
+
   const newTake = take.value;
 
   const dBFormattedTake = {
@@ -63,13 +83,14 @@ async function handleSubmitTake() {
 
   // Error handling if failed to insert new take
   try{
+
     await TakeServices.submitNewTake(dBFormattedTake)
 
     loadingNextPage.value = true
 
 
     setTimeout( async () => {
-          await router.push("/")
+          await router.push("/home")
         }
         , 500)
   }
@@ -83,6 +104,13 @@ async function handleSubmitTake() {
 </script>
 
 <template>
+
+  <!-- Conditonal render if there was an error in logging in -->
+  <div v-if="showError">
+    <ErrorBox @close-error="()=>{showError= false}">{{errorCode}}</ErrorBox>
+  </div>
+
+
   <body :class="{ 'opacity-0': loadingNextPage }" v-if="userSide !== null && debateTopic" class="bg-surface overflow-x-hidden min-h-screen flex items-center justify-center p-6 md:p-12 transition-opacity duration-600 ease-in-out">
   <main class="w-full max-w-4xl mx-auto flex flex-col justify-center min-h-[80vh]">
     <!-- Choice Indicator -->

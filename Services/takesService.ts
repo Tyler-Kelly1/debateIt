@@ -111,13 +111,26 @@ export const TakeServices = {
 
     async submitNewTake(newTake:any): Promise<void>{
 
-        const {error} = await supabase
+        const {data: insertedTake, error} = await supabase
 
             .from('Takes')
             .insert(newTake)
+            .select('take_id')
+            .single();
 
         if (error) {
             throw Error("Connection to DB Failed! Could not submit new Take! Function: submitNewTake()");
+        }
+
+        // 2. Update the User's foreign key (take_id)
+        // We assume newTake.user_id contains the current user's UUID
+        const { error: updateError } = await supabase
+            .from('Users')
+            .update({ take_id: insertedTake.take_id })
+            .eq('id', newTake.user_id);
+
+        if (updateError) {
+            throw Error("DB Failure: Could not link Take to User. Function: submitNewTake()");
         }
 
     }

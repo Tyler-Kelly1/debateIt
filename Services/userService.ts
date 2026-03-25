@@ -28,6 +28,31 @@ export const UserService = {
         if (error) throw error;
 
         return data[0].side;
+
+    },
+
+
+
+    async doesUserHaveTakeAndSide(userId: string){
+
+        const {data, error} =  await supabase
+
+            .from('Users')
+            .select(`
+            side,
+            take_id
+            `
+            )
+            .eq('id', userId);
+
+        if (error) throw error;
+
+        return{
+            hasTake: data[0].take_id !== null,
+            hasSide: data[0].side !== null
+        }
+
+
     }
 }
 

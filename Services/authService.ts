@@ -13,7 +13,6 @@ export const AuthService = {
         if (error) throw error
 
         //also need to update the user table with username
-
         const {error: userTableError} = await supabase
             .from('Users')
             .insert({id: data.user.id, username:username})
@@ -28,6 +27,8 @@ export const AuthService = {
             email,
             password
         })
+
+
         if (error) throw error
 
         return true
