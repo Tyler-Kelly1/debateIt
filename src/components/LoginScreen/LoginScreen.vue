@@ -172,8 +172,92 @@ import {onMounted, ref} from "vue";
 </template>
 
 <style scoped>
+.loginPage {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #efefef;
+  padding: 30px;
+}
 
-.title
+.loginCard {
+  width: 100%;
+  max-width: 700px;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 50px 48px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.loginCard h1 {
+  margin: 0;
+  font-size: 4rem;
+  color: #12305b;
+  font-weight: 800;
+}
+
+.subtext {
+  margin-top: 8px;
+  margin-bottom: 40px;
+  font-size: 1.35rem;
+  color: #355071;
+}
+
+.formGroup {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #243d63;
+}
+
+.formGroup input {
+  width: 100%;
+  height: 76px;
+  border: 1px solid #cfd5de;
+  border-radius: 16px;
+  background: #f3f4f6;
+  padding: 0 22px;
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.loginBtn {
+  width: 100%;
+  margin-top: 8px;
+  height: 72px;
+  border: none;
+  border-radius: 16px;
+  background: #08cc4b;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.signupText {
+  margin-top: 34px;
+  font-size: 1.1rem;
+  color: #355071;
+}
+
+.signupText span {
+  color: #08b542;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.create {
+  min-height: 100vh;
+}
+/*.title
 {
   text-align: center;
   font-size: 5rem;
@@ -204,5 +288,5 @@ import {onMounted, ref} from "vue";
   border: 1px solid yellow;
   width: 100%;
   height: 100vh;
-}
+}*/
 </style>

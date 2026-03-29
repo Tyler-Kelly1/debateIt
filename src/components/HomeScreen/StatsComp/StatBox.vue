@@ -58,9 +58,78 @@ const stats = computed(() => {
     </div>
   </div>
 
+  <div class=statContainer>
+
+    Disagree: {{stats.disagreePercentage}}%
+    Agree: {{stats.agreePercentage}}%
+    Total Takes: {{stats.totalVotes}}
+
+  </div>
+
+  <div class="statContainer">
+
+    <div class="voteCircle agree">
+      <div class="icon">👍</div>
+      <div class="count">{{ agreeVotes }}</div>
+    </div>
+
+    <div class="voteCircle disagree">
+      <div class="icon">👎</div>
+      <div class="count">{{ disagreeVotes }}</div>
+    </div>
+
+  </div>
+
 </template>
 
-<style scoped>
 
+
+
+
+
+<style scoped>
+.statContainer {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 18px;
+  margin-bottom: 36px;
+
+  background-color: black;
+
+
+}
+
+.voteCircle {
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+  border: 6px, solid rgba(255, 255, 255, 0.45);
+}
+
+.agree {
+  background: #06b63f;
+}
+
+.disagree {
+  background: #ff2d34;
+}
+
+.icon {
+  font-size: 3.4rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.count {
+  font-size: 2rem;
+  font-weight: 700;
+}
 
 </style>

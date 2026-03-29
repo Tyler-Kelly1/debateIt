@@ -312,19 +312,24 @@ async function handleReaction(reaction) {
 <style scoped>
 
 .home {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid yellow;
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  background: #efefef;
+  padding: 20px 24px 40px;
 }
 
-.chooseSide{
-  display: flex;
-  flex-direction: column;
-  border: 1px solid yellow;
-  width: 100%;
-  height: 100vh;
+.debateTitle {
+  width: min(1300px, 92vw);
+  margin: 0 auto 10px;
+  text-align: center;
+  font-size: clamp(2.3rem, 4vw, 4.4rem);
+  line-height: 1.15;
+  font-weight: 700;
+  color: #111;
+}
+
+.chooseSide {
+  min-height: 100vh;
 }
 
 </style>
