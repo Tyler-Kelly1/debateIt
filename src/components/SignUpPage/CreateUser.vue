@@ -10,6 +10,7 @@ import {UserService} from "../../../Services/userService.ts";
 const router = useRouter()
 
 const email = ref("")
+const username = ref("")
 const password = ref("")
 const password_confirmation = ref("")
 const showErrorBox = ref(false)
@@ -41,7 +42,7 @@ async function handleSubmit() {
 
   // 3. Service Layer Call (The "Relay Race")
   try {
-    const success = await AuthService.registerAccount(email.value, password.value)
+    const success = await AuthService.registerAccount(username.value, email.value, password.value)
 
     //Then login to get browser token
     await AuthService.login(email.value, password.value)
@@ -50,6 +51,8 @@ async function handleSubmit() {
       // Direct the user to check their email or go to login
       await router.replace('/ChooseSide')
     }
+
+
   } catch (error) {
     // This catches the error we "threw" in the service layer
     showErrorBox.value = true
@@ -57,9 +60,6 @@ async function handleSubmit() {
   }
 
 }
-
-
-
 
 
 </script>
@@ -96,6 +96,19 @@ async function handleSubmit() {
 
       <!-- Registration Form -->
       <form @submit.prevent="handleSubmit" class="space-y-5">
+
+        <div class="space-y-2">
+          <label class="block text-[10px] font-bold uppercase tracking-[0.15em] text-black">
+            Username
+          </label>
+          <div class="relative">
+            <input v-model="username" class="w-full px-4 py-4 border-2 border-black bg-white focus:outline-none focus:border-primary font-bold tracking-widest placeholder:text-zinc-300 transition-all text-l" placeholder="Username" type="text"/>
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 opacity-20">
+            </div>
+          </div>
+        </div>
+
+
         <!-- Input Group 1 -->
         <div class="space-y-2">
           <label class="block text-[10px] font-bold uppercase tracking-[0.15em] text-black">

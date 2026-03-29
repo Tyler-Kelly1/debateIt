@@ -15,10 +15,11 @@ export const AuthService = {
         //also need to update the user table with username
         const {error: userTableError} = await supabase
             .from('Users')
-            .insert({id: data.user.id, username:username})
+            .insert({id: data.user.id, Username:username, side: null, take_id: null})
 
         if (userTableError) throw userTableError;
 
+        return true;
     },
 
     async login(email: string, password: string) {
