@@ -50,29 +50,58 @@ const router = createRouter({
 // NAVIGATION GUARD: The "Bouncer" logic
 router.beforeEach(async (to, from) => {
 
-    router.beforeEach(async (to, from) => {
 
         const loggedIn = await AuthService.isLoggedIn();
-
-        console.log(loggedIn);
 
         // 1. PUBLIC ACCESS CHECK
         // Allow users to reach Login or SignUp if they aren't logged in.
         if (!loggedIn) {
 
-            if (to.name !== 'login' && to.name !== 'NewUser') {
+            if (to.name !== 'login' && to.name !== 'NewUser' && to.name !== 'ChooseSide') {
                 return { name: 'login' };
             }
+
+
 
             return true; // Let them stay on Login/SignUp
         }
 
         // 2. THE CHECKPOINTS (For Logged In Users)
         // If they are logged in, we check their "Progress" in the daily cycle.
-        const userId = await AuthService.getUserId();
-        const { hasSide, hasTake } = await UserService.doesUserHaveTakeAndSide(userId);
+
+        let userId
+
+        try{
+            userId = await AuthService.getUserId();
+        }
+        catch(error){
+            console.log(error);
+        }
+
+        let hasSide;
+        let hasTake;
+
+        try{
+            //this isnt working?
+
+            console.log("HERE")
+            await UserService.doesUserHaveTakeAndSide(userId).then((res) => {
+
+                hasSide = res.hasSide;
+                hasTake = res.hasTake;
+            })
+
+
+        }
+        catch(err){
+            hasSide = false;
+            hasTake = false;
+        }
 
         // Order: Side -> Take -> Home
+
+        console.log(hasSide);
+        console.log(hasTake);
 
         // Checkpoint A: Do they have a side?
         if (!hasSide) {
@@ -93,7 +122,6 @@ router.beforeEach(async (to, from) => {
         }
 
         return true; // Finally, let them through to Home
-    });
 
 });
 

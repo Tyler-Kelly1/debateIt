@@ -137,5 +137,3 @@ export const TakeServices = {
 
 }
 
-TakeServices.getTopic().then(data => console.log(data))
-

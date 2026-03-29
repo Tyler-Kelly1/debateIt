@@ -44,7 +44,10 @@ export const UserService = {
             )
             .eq('id', userId);
 
-        if (error) throw error;
+        if (error) {
+            throw Error("Connection to DB Failed!");
+        }
+
 
         return{
             hasTake: data[0].take_id !== null,

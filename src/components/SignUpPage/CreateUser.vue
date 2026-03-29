@@ -48,7 +48,7 @@ async function handleSubmit() {
 
     if (success) {
       // Direct the user to check their email or go to login
-      await router.push('/ChooseSide')
+      await router.replace('/ChooseSide')
     }
   } catch (error) {
     // This catches the error we "threw" in the service layer

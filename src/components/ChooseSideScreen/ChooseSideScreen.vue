@@ -18,7 +18,6 @@ onMounted(async () => {
 
   await new Promise(resolve => setTimeout(resolve, 100));
 
-
   //Checking if user is even logged in
   try{
 
@@ -59,10 +58,9 @@ async function handleChoice(side) {
       // This ensures the Navigation Guard sees 'hasSide = true'
       await UserService.updateSide(user_id.value, side);
 
-      // 2. Short delay for the "fade out" animation effect
-      setTimeout(() => {
-        router.replace("/SubmitTake");
-      }, 300);
+      const navigationResult = await router.push({ name: 'SubmitTake' });
+
+      console.log(navigationResult)
 
     } catch (error) {
       loadingNextPage.value = false;
@@ -76,6 +74,7 @@ async function handleChoice(side) {
     setTimeout(() => {
       router.replace("/login");
     }, 300);
+
   }
 
 }

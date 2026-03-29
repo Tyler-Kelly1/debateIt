@@ -90,7 +90,7 @@ async function handleSubmitTake() {
 
 
     setTimeout( async () => {
-          await router.push("/home")
+          await router.replace("/home")
         }
         , 500)
   }
