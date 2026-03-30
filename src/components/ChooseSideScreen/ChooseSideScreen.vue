@@ -53,16 +53,23 @@ async function handleChoice(side) {
   // If user is logged in aka, this is for real.
   if(!demo.value){
 
+    if (!user_id.value) {
+      console.error("NO USER ID - Redirecting to Login");
+      await router.replace("/login");
+      return;
+    }
+
     try {
       // 1. Actually WAIT for the database to finish
       // This ensures the Navigation Guard sees 'hasSide = true'
       await UserService.updateSide(user_id.value, side);
 
-      const navigationResult = await router.push({ name: 'SubmitTake' });
-
-      console.log(navigationResult)
+      await router.replace("/SubmitTake");
 
     } catch (error) {
+
+      console.log(error)
+
       loadingNextPage.value = false;
 
       await router.replace("/ChooseSide");

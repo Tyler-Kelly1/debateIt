@@ -100,8 +100,8 @@ router.beforeEach(async (to, from) => {
 
         // Order: Side -> Take -> Home
 
-        console.log(hasSide);
-        console.log(hasTake);
+        console.log("side" + hasSide);
+        console.log("take" + hasTake);
 
         // Checkpoint A: Do they have a side?
         if (!hasSide) {

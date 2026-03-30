@@ -5,19 +5,22 @@ export const AuthService = {
 
     async registerAccount(username: string, email: string, password: string) {
 
-        const {data, error} = await supabase.auth.signUp({
+        // 1. Create the Auth Entry
+        const { data, error } = await supabase.auth.signUp({
             email,
             password,
         });
 
-        if (error) throw error
+        if (error) throw error;
 
-        //also need to update the user table with username
-        const {error: userTableError} = await supabase
-            .from('Users')
-            .insert({id: data.user.id, Username:username, side: null, take_id: null})
+        // 2. Call the SQL Function (RPC)
+        // We pass the new UUID and the Username to our database function
+        const { error: rpcError } = await supabase.rpc('initialize_user_profile', {
+            user_id: data.user.id,
+            username_input: username
+        });
 
-        if (userTableError) throw userTableError;
+        if (rpcError) throw rpcError;
 
         return true;
     },
