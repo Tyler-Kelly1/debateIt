@@ -9,18 +9,14 @@ export const AuthService = {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+                data: {
+                    display_name: username // This goes into 'raw_user_meta_data'
+                }
+            }
         });
 
         if (error) throw error;
-
-        // 2. Call the SQL Function (RPC)
-        // We pass the new UUID and the Username to our database function
-        const { error: rpcError } = await supabase.rpc('initialize_user_profile', {
-            user_id: data.user.id,
-            username_input: username
-        });
-
-        if (rpcError) throw rpcError;
 
         return true;
     },
@@ -74,6 +70,18 @@ export const AuthService = {
         if (error) throw error;
 
         return data.user.id
+    },
+
+    async signInWithGoogle() {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + '/ChooseSide',
+            },
+        });
+
+        if (error) throw error;
+        return data;
     }
 
 }

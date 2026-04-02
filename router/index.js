@@ -25,7 +25,8 @@ const routes = [
     {
         path: '/ChooseSide',
         name: 'ChooseSide',
-        component: ChooseSideScreen
+        component: ChooseSideScreen,
+        alias: ['/']
     },
 
     {
@@ -38,7 +39,7 @@ const routes = [
         path: '/NewUser',
         name: 'NewUser',
         component: CreateUser
-    }
+    },
 
 ];
 
