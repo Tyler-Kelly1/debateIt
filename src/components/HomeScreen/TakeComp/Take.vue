@@ -31,6 +31,9 @@ const props = defineProps({
   },
   dislikes:{
     type:Number,
+  },
+  replies:{
+    type: []
   }
 
 })
@@ -43,7 +46,6 @@ function handleReaction(status){
   emit("newReaction", {type: status, takeSide: props.side})
 
 }
-
 
 </script>
 
@@ -68,6 +70,8 @@ function handleReaction(status){
         <span class="material-symbols-outlined">thumb_down</span> {{dislikes}}
       </button>
     </div>
+
+    <
   </div>
 </template>
 

@@ -123,6 +123,8 @@ function handleUserReactionCheck(takeId){
             :userReaction= handleUserReactionCheck(take.take_id)
             :likes = "take.likes"
             :dislikes = "take.dislikes"
+            :replies = "take.replies"
+
             @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>
@@ -147,6 +149,8 @@ function handleUserReactionCheck(takeId){
             :userReaction= handleUserReactionCheck(take.take_id)
             :likes = "take.likes"
             :dislikes = "take.dislikes"
+            :replies = "take.replies"
+
             @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
         />
       </div>

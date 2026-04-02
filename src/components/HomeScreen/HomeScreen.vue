@@ -1,6 +1,6 @@
 <script setup>
 // 1. IMPORTING REQUISITES
-import TakesBox from "./CommentComp/TakesBox.vue";
+import TakesBox from "./TakeComp/TakesBox.vue";
 import StatBox from "./StatsComp/StatBox.vue";
 import CountDown from "./TimerComp/CountDown.vue"
 
@@ -72,6 +72,8 @@ async function updateData() {
 
         }, {})
 
+
+
         const formattedNewTake = {
               take_id: newTake.take_id,
               message: newTake.message,
@@ -81,7 +83,10 @@ async function updateData() {
               reactions: formattedReactions,
               likes: likes,
               dislikes: dislikes,
+              replies: newTake.Replies
             }
+
+            console.log(formattedNewTake)
 
 
 

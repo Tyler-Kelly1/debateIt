@@ -73,6 +73,11 @@ export const TakeServices = {
                 Reactions (
                 user_id,
                 type
+                ),
+                Replies(
+                take_id,
+                user_id,
+                message
                 )
             )
             `)
@@ -83,6 +88,7 @@ export const TakeServices = {
         if(error) throw Error("Connection to DB Failed! Could not load all takes! Function: loadAlLTakes()");
 
 
+        console.log(data[0].Takes)
         return {
             topic : data[0].topic,
             takes: data[0].Takes
