@@ -60,12 +60,12 @@ router.beforeEach(async (to, from) => {
             if (to.name !== 'login' && to.name !== 'NewUser' && to.name !== 'ChooseSide') {
                 return { name: 'login' };
             }
-
+            console.log('Not logged in');
 
 
             return true; // Let them stay on Login/SignUp
         }
-
+        console.log('loggedIn');
         // 2. THE CHECKPOINTS (For Logged In Users)
         // If they are logged in, we check their "Progress" in the daily cycle.
 
