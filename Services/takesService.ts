@@ -50,7 +50,6 @@ export const TakeServices = {
 
                     assignTakeToSide(formattedTake)
 
-
                 }
             )
             .subscribe();
@@ -139,7 +138,28 @@ export const TakeServices = {
             throw Error("DB Failure: Could not link Take to User. Function: submitNewTake()");
         }
 
-    }
+    },
 
+    async submitNewReply(newReply:string, userId:string, takeId:string):Promise<boolean>{
+
+
+        const {data, error} = await supabase
+            .from('Replies')
+            .insert([
+                {
+                    take_id:takeId,
+                    message:newReply,
+                    user_id:userId
+
+                }
+            ])
+            .select()
+
+        console.log(error)
+
+        if(error) throw Error("Connection to DB Failed!");
+
+        return true;
+    }
 }
 
