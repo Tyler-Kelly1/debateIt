@@ -3,7 +3,7 @@ import { computed } from "vue";
 
 // 1. PROPS (The Inputs)
 // These are the numbers passed down from the Home component.
-// They represent the "Raw Data" from your Supabase 'Debates' table.
+// They represent the "Raw Data" from Supabase 'Debates' table.
 const props = defineProps({
   agreeVotes: {
     default: 0,

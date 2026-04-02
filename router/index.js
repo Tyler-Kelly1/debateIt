@@ -115,6 +115,11 @@ router.beforeEach(async (to, from) => {
             return true;
         }
 
+        if (hasTake && hasSide) {
+            if (to.name !== 'home') return { name: 'home' };
+            return true;
+        }
+
         // Checkpoint C: Already finished? Don't let them go back to Side/Take/Login
         const restrictedAfterCompletion = ['login', 'ChooseSide', 'SubmitTake', 'NewUser'];
         if (restrictedAfterCompletion.includes(to.name)) {
