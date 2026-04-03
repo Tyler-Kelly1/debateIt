@@ -3,6 +3,7 @@
 import TakesBox from "./TakeComp/TakesBox.vue";
 import StatBox from "./StatsComp/StatBox.vue";
 import CountDown from "./TimerComp/CountDown.vue"
+import Profile from "./ProfileComp/Profile.vue";
 
 
 // 'onMounted' is a Lifecycle Hook. It runs code as soon as the component appears on screen.
@@ -13,6 +14,7 @@ import {AuthService} from "../../../Services/authService.ts";
 import {TakeServices} from "../../../Services/takesService.ts";
 import {ReactionService} from "../../../Services/reactionService.ts";
 import {UserService} from "../../../Services/userService.ts";
+
 
 
 // 2. DATA STATE (The "Local Memory")
@@ -276,28 +278,35 @@ async function handleReaction(reaction) {
 </script>
 
 <template>
+  <div class="relative w-full">
 
-  <div class="w-full mt-2">
-    <div class="flex flex-col">
-      <span class="text-[10px] font-bold tracking-[0.3em]">Debate It.</span>
-      <h2 class="text-3xl md:text-5xl font-black leading-[0.95] tracking-tighter uppercase pl-4 py-2">
-        {{debateTopic.topic}}
-      </h2>
+    <div class="absolute top-0 right-0">
+      <Profile v-if="userID" :user_id= "userID" />
     </div>
+
+    <div class="w-full mt-2">
+      <div class="flex flex-col">
+        <span class="text-[10px] font-bold tracking-[0.3em]">Debate It.</span>
+        <h2 class="text-3xl md:text-5xl font-black leading-[0.95] tracking-tighter uppercase pl-4 py-2">
+          {{debateTopic.topic}}
+        </h2>
+      </div>
+    </div>
+
+    <CountDown></CountDown>
+
+
+
+    <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
+
+    <TakesBox
+          :user_ID = userID
+          :agreeTakes="agreeTakes"
+          :disagreeTakes="disagreeTakes"
+          @newReaction="handleReaction"
+    ></TakesBox>
+
   </div>
-
-  <CountDown></CountDown>
-
-  <StatBox :disagree-votes="statsData.disagree" :agree-votes="statsData.agree" />
-
-  <TakesBox
-        :user_ID = userID
-        :agreeTakes="agreeTakes"
-        :disagreeTakes="disagreeTakes"
-        @newReaction="handleReaction"
-  ></TakesBox>
-
-
 </template>
 
 <style scoped>

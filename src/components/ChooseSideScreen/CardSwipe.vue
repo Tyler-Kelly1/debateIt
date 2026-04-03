@@ -100,7 +100,7 @@ function onEnd() {
               <div class="mb-8 md:mb-12 inline-flex mx-auto items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-primary/5 text-primary border-2 border-primary">
                 <span class="material-symbols-outlined text-3xl md:text-4xl" data-icon="touch_app">touch_app</span>
               </div>
-              <h2 class="text-2xl md:text-3xl font-brutal-bold uppercase mb-4 md:mb-6 leading-tight tracking-tight font-industrial">Human Input Required</h2>
+              <h2 class="text-2xl md:text-3xl font-brutal-bold uppercase mb-4 md:mb-6 leading-tight tracking-tight font-industrial"></h2>
               <p class="text-brutalist-gray-600 text-base md:text-lg font-semibold leading-snug">
                 Cast your vote by swiping. Slide <span class="text-blue-700">Right</span> to agree, or <span class="text-red-700">Left</span> to disagree.
               </p>

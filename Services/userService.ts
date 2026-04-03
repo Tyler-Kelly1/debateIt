@@ -59,6 +59,18 @@ export const UserService = {
         }
 
 
+    },
+
+    async getUsername(userId: string){
+
+        const {data, error} =  await supabase
+            .from('Users')
+            .select('Username')
+            .eq('id', userId);
+
+        if (error) throw Error("Connection to DB Failed!");
+
+        return data[0].Username;
     }
 }
 

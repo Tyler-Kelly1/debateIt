@@ -6,7 +6,8 @@
     "paths": { "@/*": ["./src/*"] },
     "target": "ESNext",
     "lib": ["ESNext", "DOM"], // "ESNext" includes all standard utility types
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "bundler"
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

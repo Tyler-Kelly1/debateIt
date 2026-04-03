@@ -102,14 +102,14 @@ export const TakeServices = {
         const {data, error} = await supabase
 
             .from('Debates')
-            .select(``)
+            .select(`topic,scheduled_date`)
             .eq('is_active', true)
 
         if (error) throw Error("Connection to DB Failed! Could not load topic! Function: getTopic()");
 
         return {
             topic: data[0].topic,
-            expiration_date: data[0].Expiration_Date
+            expiration_date: data[0].scheduled_date
         }
 
     },
