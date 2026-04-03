@@ -41,9 +41,17 @@ const props = defineProps({
 
 })
 
+// Local mutable copies for optomistic UI
+const usersReactionLocal = ref(props.userReaction)
+const likesLocal = ref(props.likes)
+const dislikesLocal = ref(props.dislikes)
+
 const emit = defineEmits(["newReaction"])
 const showReplies = ref(false)
+
 const repliesLocal = ref()
+
+
 const newReply = ref()
 
 const replyCount = computed(() => {
@@ -64,6 +72,59 @@ else{
 
 //Reaction handler
 function handleReaction(status){
+
+  //Need some optamistic UI here
+
+  //If like press
+  if(status === "Like"){
+
+    // If already pressed
+    if(usersReactionLocal.value === "Like"){
+      usersReactionLocal.value = ""
+      likesLocal.value = likesLocal.value - 1;
+
+    }
+    else{
+
+      //check for switched reaction
+
+      if(usersReactionLocal.value === "Dislike"){
+        dislikesLocal.value = dislikesLocal.value - 1;
+      }
+
+
+      usersReactionLocal.value = status;
+      likesLocal.value = likesLocal.value + 1;
+    }
+
+  }
+
+  //If Dislike press
+  if(status === "Dislike"){
+
+    // If already pressed
+    if(usersReactionLocal.value === "Dislike"){
+      usersReactionLocal.value = ""
+
+      dislikesLocal.value = dislikesLocal.value - 1;
+
+    }
+    else{
+
+      //check for switched reaction
+
+      if(usersReactionLocal.value === "Like"){
+        likesLocal.value = likesLocal.value - 1;
+      }
+
+
+      usersReactionLocal.value = status;
+      dislikesLocal.value = dislikesLocal.value + 1;
+    }
+
+  }
+
+  if(usersReactionLocal.value === "Dislike"){}
 
   emit("newReaction", {type: status, takeSide: props.side})
 
@@ -111,16 +172,16 @@ function handleNewReply(){
     <div class="flex gap-2 pt-2 border-t border-surface-container text-[0.8rem]">
 
       <button @click="handleReaction('Like')"
-              :class="userReaction === 'Like' ? 'filled-icon-agree' : 'unfilled-icon'"
+              :class="usersReactionLocal === 'Like' ? 'filled-icon-agree' : 'unfilled-icon'"
               class="flex items-center gap-0.5">
-        <span  class="material-symbols-outlined">thumb_up</span> <span>{{likes}}</span>
+        <span  class="material-symbols-outlined">thumb_up</span> <span>{{likesLocal}}</span>
       </button>
 
       <button @click="handleReaction('Dislike')"
               class="flex items-center gap-0.5 text-[0.2rem]"
-              :class="userReaction === 'Dislike' ? 'filled-icon-disagree' : 'unfilled-icon'"
+              :class="usersReactionLocal === 'Dislike' ? 'filled-icon-disagree' : 'unfilled-icon'"
       >
-        <span class="material-symbols-outlined">thumb_down</span> {{dislikes}}
+        <span class="material-symbols-outlined">thumb_down</span> {{dislikesLocal}}
       </button>
 
       <button @click="()=>{showReplies = !showReplies}"
