@@ -102,7 +102,7 @@ function onEnd() {
               </div>
               <h2 class="text-2xl md:text-3xl font-brutal-bold uppercase mb-4 md:mb-6 leading-tight tracking-tight font-industrial"></h2>
               <p class="text-brutalist-gray-600 text-base md:text-lg font-semibold leading-snug">
-                Cast your vote by swiping. Slide <span class="text-blue-700">Right</span> to agree, or <span class="text-red-700">Left</span> to disagree.
+                Cast your vote by swiping. Slide <span class="text-green-700">Right</span> to agree, or <span class="text-red-700">Left</span> to disagree.
               </p>
             </div>
             <!-- Card Footer -->
