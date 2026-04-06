@@ -102,7 +102,7 @@ function onEnd() {
               </div>
               <h2 class="text-2xl md:text-3xl font-brutal-bold uppercase mb-4 md:mb-6 leading-tight tracking-tight font-industrial"></h2>
               <p class="text-brutalist-gray-600 text-base md:text-lg font-semibold leading-snug">
-                Cast your vote by swiping. Slide <span class="text-green-700">Right</span> to agree, or <span class="text-red-700">Left</span> to disagree.
+                Swipe <span class="text-red-700">Left</span> to disagree, or <span class="text-green-700">Right</span> to agree.
               </p>
             </div>
             <!-- Card Footer -->
@@ -168,6 +168,6 @@ body {
 }
 .glow-right {
   right: 0;
-  background: linear-gradient(to left, rgba(0, 33, 243, 0.25), transparent);
+  background: linear-gradient(to left, rgba(8, 204, 75, 0.25), transparent);
 }
 </style>
