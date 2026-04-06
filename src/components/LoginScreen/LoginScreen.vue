@@ -93,7 +93,7 @@ import {onMounted, ref} from "vue";
       DEBATE<br/>IT.
     </h1>
     <div class="inline-block bg-black text-white px-3 py-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
-      AUTHENTICATION REQUIRED // HUMAN ONLY ACCESS
+      AUTHENTICATION REQUIRED // CRITICAL THINKERS ONLY
     </div>
   </header>
   <!-- Main Authentication Block -->
@@ -116,13 +116,13 @@ import {onMounted, ref} from "vue";
           <input v-model = "password" class="w-full border-2 border-black bg-white px-4 py-4 font-bold text-lg placeholder:text-zinc-300 focus:ring-0 rounded-none appearance-none" placeholder="********" type="password"/>
         </div>
         <!-- Primary Action -->
-        <button class="w-full bg-[#0021f3] text-white tracking-[0.15em] font-black text-xl py-2 border-2 uppercase border-black  active:bg-primary-dark" type="submit">
+        <button class="w-full bg-[#08cc4b] text-white tracking-[0.15em] font-black text-xl py-2 border-2 uppercase border-black  active:bg-primary-dark" type="submit">
           login
         </button>
 
       </form>
 
-      <button @click="()=>{router.replace('/newUser')}" class="w-full bg-[#0021f3] text-white tracking-[0.1em] font-black text-xl py-2 border-2 mt-3 uppercase border-black  active:bg-primary-dark">
+      <button @click="()=>{router.replace('/newUser')}" class="w-full bg-[#08cc4b] text-white tracking-[0.1em] font-black text-xl py-2 border-2 mt-3 uppercase border-black  active:bg-primary-dark">
         Create an Account
       </button>
 
@@ -194,7 +194,7 @@ import {onMounted, ref} from "vue";
 .loginCard h1 {
   margin: 0;
   font-size: 4rem;
-  color: #12305b;
+  color: #08cc4b;
   font-weight: 800;
 }
 
@@ -215,7 +215,7 @@ import {onMounted, ref} from "vue";
   margin-bottom: 10px;
   font-size: 1.1rem;
   font-weight: 700;
-  color: #243d63;
+  color: #08cc4b;
 }
 
 .formGroup input {
@@ -257,36 +257,4 @@ import {onMounted, ref} from "vue";
 .create {
   min-height: 100vh;
 }
-/*.title
-{
-  text-align: center;
-  font-size: 5rem;
-}
-.credentials
-{
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border: solid;
-  border-color: red;
-}
-.login
-{
-  display: flex;
-  flex-direction: column;
-  border: 1px solid yellow;
-  width: 100%;
-  height: 100vh;
-  background: #10c84f;
-  color: white;
-
-}
-.create
-{
-  display: flex;
-  flex-direction: column;
-  border: 1px solid yellow;
-  width: 100%;
-  height: 100vh;
-}*/
 </style>
