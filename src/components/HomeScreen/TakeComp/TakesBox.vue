@@ -129,14 +129,6 @@ function handleUserReactionCheck(takeId){
 
           <div v-else class="emptyState">No comments yet</div>
 
-          <div class="inputArea">
-          <textarea
-              v-model="agreeInput"
-              placeholder="Add a comment..."
-              maxlength="200"
-          ></textarea>
-            <button class="agreeBtn" @click="submitAgreeTake">Add Comment</button>
-          </div>
         </div>
 
         <div class="col disagreeCol">
@@ -156,74 +148,12 @@ function handleUserReactionCheck(takeId){
           </div>
 
           <div v-else class="emptyState">No comments yet</div>
-
-          <div class="inputArea">
-          <textarea
-              v-model="disagreeInput"
-              placeholder="Add a comment..."
-              maxlength="200"
-          ></textarea>
-            <button class="disagreeBtn" @click="submitDisagreeTake">Add Comment</button>
-          </div>
         </div>
       </div>
     </div>
 
   </div>
-  <!--<div class="flex-1 flex flex-col gap-6 mb-8 overflow-x-auto">
 
-    <div class="flex items-center justify-between border-b-2 border-primary pb-1">
-      <h3 class="text-lg font-black tracking-tighter italic uppercase text-primary">Affirmative Feed</h3>
-      <span class="text-[10px] font-bold bg-primary text-white px-2 pt-3">{{sortedAgree.length}}</span>
-    </div>
-
-    <div class="flex flex-col gap-2 overflow-y-auto inner-scroll max-h-[300px]">
-      <div v-for="take in sortedAgree" :key="take.take_id">
-
-        <Take
-            :take_id = "take.take_id"
-            :message= "take.message"
-            :user_id= "take.user_id"
-            :side = "take.side"
-            :userReaction= handleUserReactionCheck(take.take_id)
-            :likes = "take.likes"
-            :dislikes = "take.dislikes"
-            :replies = "take.replies"
-
-            @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
-        />
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between border-b-2 border-b-disagree pb-1">
-      <h3 class="text-lg font-black tracking-tighter italic uppercase text-disagree">Dissent Feed</h3>
-      <span class="text-[10px] font-bold bg-disagree text-white px-2 py-0.5">{{sortedDisagree.length}}</span>
-    </div>
-
-    <div class="flex flex-col gap-4 overflow-y-auto inner-scroll max-h-[300px]">
-
-
-
-      <div v-for="take in sortedDisagree" :key="take.take_id">
-        <Take
-            :take_id = "take.take_id"
-            :message = "take.message"
-            :user_id= "take.user_id"
-            :side = "take.side"
-            :reactions= "take.reactions"
-            :userReaction= handleUserReactionCheck(take.take_id)
-            :likes = "take.likes"
-            :dislikes = "take.dislikes"
-            :replies = "take.replies"
-
-            @newReaction = "(reaction) => handleNewReaction(reaction, take.take_id)"
-        />
-      </div>
-    </div>
-  </div>
-
-  </div>
-  -->
 </template>
 
 <style scoped>
@@ -293,88 +223,12 @@ function handleUserReactionCheck(takeId){
   min-height: 280px;
 }
 
-.inputArea {
-  margin-top: auto;
-  padding-top: 18px;
-  border-top: 1px solid #dcdcdc;
-}
-
-.inputArea textarea {
-  width: 100%;
-  height: 150px;
-  resize: none;
-  border: 1px solid #cfd5de;
-  border-radius: 10px;
-  background: #f7f7f7;
-  padding: 18px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.inputArea button {
-  margin-top: 14px;
-  min-width: 210px;
-  height: 60px;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-size: 1rem;
-  font-weight: 700;
-  float: right;
-}
-
-.agreeBtn {
-  background: #08cc4b;
-}
-
-.disagreeBtn {
-  background: #ff3a3f;
-}
-/*.container {
-  display: flex;
-  border: 2px solid #00d9ff;
-  backgroud: #f3f3f3;
-  width: min(1240px, 92vw);
-  height: fit-content;
-  margin: auto;
-  overflow: hidden;
-  padding: 3px;
-}*/
-
 .filterBar {
   display: flex;
   margin: auto;
 }
 
-/*.col {
-  width: 100%;
-  max-height: 50vh;
-  overflow-y: scroll; /* Allows scrolling if there are many comments
-  overflow-x: hidden;
-}
-
-.header {
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  font-weight: 600;
-  border-bottom: 1px solid #cfcfcf;
-}
-
-.agreeHeader{
-  background: #cfead5;
-  color: #006c2f
-}
-
-.disagreeHeader{
-  background: #efd2d2;
-  color: #a30000;
-}*/
-
-
 /* Specific border colors to differentiate the "Sides" of the social debate */
-.agreeCol { border: 2px solid #00ff19; }
-.disagreeCol { border: 2px solid #ff0000; }
+.agreeCol { border: 2px solid black; }
+.disagreeCol { border: 2px solid black; }
 </style>

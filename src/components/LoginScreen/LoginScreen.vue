@@ -94,6 +94,25 @@ import {onMounted, ref} from "vue";
     </h1>
     <div class="inline-block bg-black text-white px-3 py-1 text-[10px] md:text-xs font-bold tracking-[0.2em] uppercase">
       AUTHENTICATION REQUIRED // CRITICAL THINKERS ONLY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </header>
   <!-- Main Authentication Block -->
