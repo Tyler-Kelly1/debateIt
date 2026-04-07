@@ -160,17 +160,32 @@ function handleUserReactionCheck(takeId){
 
 <style scoped>
 .board {
-  width: min(1360px, 92vw);
+  width:100%;
+  max-width: 1360px;
   margin: 0 auto;
   background: #f8f8f8;
-  border-radius: 22px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .boardHeader {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: none;
+  /*grid-template-columns: 1fr 1fr;*/
+}
+
+.boardBody {
+  display:flex;
+  flex-direction: column;
+  /*grid-template-columns: 1fr 1fr;
+  min-height: 620px;*/
+}
+
+.col {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  background: #f8f8f8;
 }
 
 .header {
@@ -194,35 +209,43 @@ function handleUserReactionCheck(takeId){
   color: #a40000;
 }
 
-.boardBody {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 620px;
-}
-
-.col {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  background: #f8f8f8;
-}
-
 .agreeCol {
   border-right: 1px solid #d0d0d0;
 }
 
 .disagreeCol {
-  position: relative;
+  border-bottom: none;
 }
 
+.col::before {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 14px 0;
+  margin: -16px -16px 16px;
+  border-bottom: 1px solid #d7d7d7;
+}
+
+.agreeCol::before {
+  content: "Agree";
+  background: #d8efdf;
+  color: #006b33;
+}
+
+.disagreeCol::before {
+  content: "Disagree";
+  background: #f1d8d8;
+  color: #a40000;
+}
 .emptyState {
-  flex: 1;
+flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #94a0b8;
   font-size: 1.1rem;
-  min-height: 280px;
+  min-height: 140px;
 }
 
 .filterBar {
