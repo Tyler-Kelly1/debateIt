@@ -41,6 +41,7 @@ const props = defineProps({
 
 })
 
+
 // Local mutable copies for optomistic UI
 const usersReactionLocal = ref(props.userReaction)
 const likesLocal = ref(props.likes)
@@ -62,7 +63,7 @@ const replyCount = computed(() => {
 })
 
 
-if(props.replies[0]){
+if(props.replies && props.replies[0]){
   repliesLocal.value = props.replies;
 }
 else{

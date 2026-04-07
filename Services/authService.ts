@@ -46,7 +46,6 @@ export const AuthService = {
     async isLoggedIn(){
 
         const {data, error} = await supabase.auth.getUser();
-        console.log(data)
         if (error || !data) return false
 
         return true

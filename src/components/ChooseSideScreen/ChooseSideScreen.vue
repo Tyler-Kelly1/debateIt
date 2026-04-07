@@ -68,7 +68,6 @@ async function handleChoice(side) {
 
     } catch (error) {
 
-      console.log(error)
 
       loadingNextPage.value = false;
 

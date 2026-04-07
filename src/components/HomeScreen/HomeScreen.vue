@@ -88,9 +88,6 @@ async function updateData() {
               replies: newTake.Replies
             }
 
-            console.log(formattedNewTake)
-
-
 
             // Logic: Sort the data into the correct "Bucket" based on the 'Agree' boolean
             if (newTake.side) {

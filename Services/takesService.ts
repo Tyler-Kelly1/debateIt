@@ -86,8 +86,6 @@ export const TakeServices = {
         //Error handing
         if(error) throw Error("Connection to DB Failed! Could not load all takes! Function: loadAlLTakes()");
 
-
-        console.log(data[0].Takes)
         return {
             topic : data[0].topic,
             takes: data[0].Takes
@@ -154,8 +152,6 @@ export const TakeServices = {
                 }
             ])
             .select()
-
-        console.log(error)
 
         if(error) throw Error("Connection to DB Failed!");
 

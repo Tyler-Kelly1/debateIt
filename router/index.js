@@ -61,12 +61,10 @@ router.beforeEach(async (to, from) => {
             if (to.name !== 'login' && to.name !== 'NewUser' && to.name !== 'ChooseSide') {
                 return { name: 'login' };
             }
-            console.log('Not logged in');
 
 
             return true; // Let them stay on Login/SignUp
         }
-        console.log('loggedIn');
         // 2. THE CHECKPOINTS (For Logged In Users)
         // If they are logged in, we check their "Progress" in the daily cycle.
 
@@ -83,9 +81,7 @@ router.beforeEach(async (to, from) => {
         let hasTake;
 
         try{
-            //this isnt working?
 
-            console.log("HERE")
             await UserService.doesUserHaveTakeAndSide(userId).then((res) => {
 
                 hasSide = res.hasSide;
@@ -99,10 +95,6 @@ router.beforeEach(async (to, from) => {
             hasTake = false;
         }
 
-        // Order: Side -> Take -> Home
-
-        console.log("side" + hasSide);
-        console.log("take" + hasTake);
 
         // Checkpoint A: Do they have a side?
         if (!hasSide) {

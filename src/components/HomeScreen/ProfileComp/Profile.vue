@@ -19,18 +19,19 @@ const props = defineProps({
 })
 
 onMounted(async () => {
-  console.log(props.user_id);
+
   try {
     username.value = await UserService.getUsername(props.user_id);
     email.value = await AuthService.getUserEmail();
   } catch (error) {
     console.error("Failed to load profile: " + error);
   }
+
 });
 
 async function handleLogout() {
   await AuthService.logout();
-  router.push('/login');
+  await router.push('/login');
 }
 
 
