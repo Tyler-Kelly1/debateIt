@@ -158,7 +158,7 @@ function handleNewReply(){
 </script>
 
 <template>
-  <div class="bg-white border-2 border-on-background p-4 flex flex-col gap-1.5 text-[10px] font-medium leading-tight tracking-tight">
+  <div class="bg-white border-2 border-on-background p-4 mb-4 flex flex-col gap-1.5 text-[10px] font-medium leading-tight tracking-tight">
     <div class="flex justify-between items-center">
       <span class="text-[6px] font-bold tracking-widest text-on-surface-variant">
         Post:{{ take_id }}

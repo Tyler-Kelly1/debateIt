@@ -111,7 +111,7 @@ function handleUserReactionCheck(takeId){
       </div>
 
       <div class="boardBody">
-        <div class="col agreeCol">
+        <div class="col agreeCol mb-6">
           <div v-if="sortedAgree.length">
             <Take
                 v-for="take in sortedAgree"
@@ -164,7 +164,7 @@ function handleUserReactionCheck(takeId){
   max-width: 1360px;
   margin: 0 auto;
   background: #f8f8f8;
-  border-radius: 18px;
+  border-radius: 2px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
