@@ -106,8 +106,8 @@ function handleUserReactionCheck(takeId){
   </div>
     <div class="board">
       <div class="boardHeader">
-        <div class="header agreeHeader">Agree</div>
-        <div class="header disagreeHeader">Disagree</div>
+        <div class="header agreeHeader">Consensus</div>
+        <div class="header disagreeHeader">Dissent</div>
       </div>
 
       <div class="boardBody">
@@ -228,13 +228,13 @@ function handleUserReactionCheck(takeId){
 }
 
 .agreeCol::before {
-  content: "Agree";
+  content: "Consensus";
   background: #d8efdf;
   color: #006b33;
 }
 
 .disagreeCol::before {
-  content: "Disagree";
+  content: "Dissent";
   background: #f1d8d8;
   color: #a40000;
 }
