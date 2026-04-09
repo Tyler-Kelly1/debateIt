@@ -1,6 +1,6 @@
 <script setup lang="js">
 
-import {computed, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {TakeServices as TakeService, TakeServices} from "../../../Services/takesService";
 import {AuthService} from "../../../Services/authService.ts";
 import {useRouter} from "vue-router";
@@ -178,7 +178,7 @@ async function handleSubmitTake() {
 <style scoped>
 
 .agreeColors{
-  background-color: #0021f3;
+  background-color: #08cc4b;
 }
 
 .disagreeColors{
@@ -186,8 +186,8 @@ async function handleSubmitTake() {
 }
 
 .agreeFlag{
-  border-color: #0021f3;
-  color: #0021f3;
+  border-color: #08cc4b;
+  color: #08cc4b;
 
 }
 
@@ -201,7 +201,7 @@ async function handleSubmitTake() {
 }
 
 .agreeTextInput:focus{
-  border-color: #0021f3;
+  border-color: #08cc4b;
 }
 
 .disagreeTextInput{
