@@ -104,7 +104,6 @@ async function handleSubmitTake() {
 
 }
 
-
 </script>
 
 <template>

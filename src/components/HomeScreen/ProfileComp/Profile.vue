@@ -43,7 +43,7 @@ async function handleLogout() {
   <div class="relative">
     <button
         @click="isOpen = !isOpen"
-        class="bg-white text-black px-2 py-1 rounded-md text-sm"
+        class="bg-transparent text-black px-2 py-1 rounded-md text-sm"
     >
       Menu
     </button>
