@@ -131,7 +131,7 @@ async function handleSubmitTake() {
             x_circle
           </span>
         </span>
-        {{userSide}}
+        {{userSide ? 'consensus' : 'dissent'}}
       </div>
     </div>
 
