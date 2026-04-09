@@ -58,26 +58,9 @@ const stats = computed(() => {
     </div>
   </div>
 
-  <div class=statContainer>
-
-    Disagree: {{stats.disagreePercentage}}%
-    Agree: {{stats.agreePercentage}}%
-    Total Takes: {{stats.totalVotes}}
-
-  </div>
-
 </template>
 
 <style scoped>
-.statContainer {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  margin-top: 18px;
-  margin-bottom: 36px;
 
-  background-color: black;
-
-}
 
 </style>
