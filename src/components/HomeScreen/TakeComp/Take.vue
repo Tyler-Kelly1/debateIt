@@ -4,6 +4,10 @@
 //Props of the comment comp
 import {computed, ref} from "vue";
 import {TakeServices} from "../../../../Services/takesService.ts";
+import { AllProfanity } from 'allprofanity';
+
+
+
 
 const props = defineProps({
 
@@ -41,6 +45,7 @@ const props = defineProps({
 
 })
 
+const filter = new AllProfanity();
 
 // Local mutable copies for optomistic UI
 const usersReactionLocal = ref(props.userReaction)
@@ -138,9 +143,11 @@ function handleNewReply(){
     return
   }
 
+  const sanitizedReply = filter.cleanWithPlaceholder(newReply.value, "[CENSORED]")
+
 
   const result = TakeServices.submitNewReply(
-      newReply.value,
+      sanitizedReply,
       props.user_id,
       props.take_id
   )
@@ -148,7 +155,7 @@ function handleNewReply(){
   //Optimistically UI add the reply immediately
   if(result){
 
-    repliesLocal.value.push({take_id:props.take_id, message:newReply.value})
+    repliesLocal.value.push({take_id:props.take_id, message:sanitizedReply})
     newReply.value = ""
 
   }
@@ -204,7 +211,7 @@ function handleNewReply(){
           <div>
             <textarea
                 v-model="newReply"
-                class="m-2 p-0.5 w-80 border-b-1 text-[12px]"
+                class="m-2 p-0.5 resize-none h-fit w-fit border-b-1 text-[12px]"
                 maxlength="200"
                 placeholder="Enter your opinion here..."
             />
@@ -312,4 +319,5 @@ function handleNewReply(){
   opacity: 0;
   transform: translateY(-18px);
 }
+
 </style>
