@@ -1,13 +1,14 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     "allowJs": true,
     "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] },
-    "target": "ESNext",
-    "lib": ["ESNext", "DOM"], // "ESNext" includes all standard utility types
+    "target": "ES6",
+    "module": "CommonJS",
+    "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "node",
+    "esModuleInterop": true
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

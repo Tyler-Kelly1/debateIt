@@ -1,22 +1,24 @@
 import { TakeServices } from "../Services/takesService";
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 // ─── Mock the Supabase client ────────────────────────────────────────────────
-jest.mock("../src/config/supabaseClient.js", () => {
+vi.mock("../src/config/supabaseClient.js", () => {
     return {
         __esModule: true,
         default: {
-            from: jest.fn(),
-            channel: jest.fn(),
+            from: vi.fn(),
+            channel: vi.fn(),
         },
     };
 });
 
 import supabase from "../src/config/supabaseClient.js";
 
-const mockFrom    = supabase.from    as jest.Mock;
-const mockChannel = supabase.channel as jest.Mock;
+const mockFrom    = supabase.from    as Mock;
+const mockChannel = supabase.channel as Mock;
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => vi.clearAllMocks());
 
 // ─────────────────────────────────────────────────────────────────────────────
 // subscribeToTakesUpdates
@@ -26,26 +28,26 @@ describe("TakeServices.subscribeToTakesUpdates", () => {
     // Helper that builds the fake channel chain and returns the .on mock
     // so individual tests can inspect or trigger it
     function buildChannelChain(onImpl?: (event: string, filter: object, cb: Function) => any) {
-        const subscribeMock = jest.fn().mockReturnValue({ status: "SUBSCRIBED" });
-        const onMock = jest.fn().mockImplementation(onImpl ?? ((_e, _f, _cb) => ({ subscribe: subscribeMock })));
+        const subscribeMock = vi.fn().mockReturnValue({ status: "SUBSCRIBED" });
+        const onMock = vi.fn().mockImplementation(onImpl ?? ((_e, _f, _cb) => ({ subscribe: subscribeMock })));
         mockChannel.mockReturnValue({ on: onMock });
         return { onMock, subscribeMock };
     }
 
     it("calls channel with the correct channel name", () => {
         const { onMock } = buildChannelChain();
-        onMock.mockReturnValue({ subscribe: jest.fn() });
+        onMock.mockReturnValue({ subscribe: vi.fn() });
 
-        TakeServices.subscribeToTakesUpdates(jest.fn());
+        TakeServices.subscribeToTakesUpdates(vi.fn());
 
         expect(mockChannel).toHaveBeenCalledWith("take_updates");
     });
 
     it("registers a listener for INSERT events on the Takes table", () => {
         const { onMock } = buildChannelChain();
-        onMock.mockReturnValue({ subscribe: jest.fn() });
+        onMock.mockReturnValue({ subscribe: vi.fn() });
 
-        TakeServices.subscribeToTakesUpdates(jest.fn());
+        TakeServices.subscribeToTakesUpdates(vi.fn());
 
         expect(onMock).toHaveBeenCalledWith(
             "postgres_changes",
@@ -55,12 +57,12 @@ describe("TakeServices.subscribeToTakesUpdates", () => {
     });
 
     it("calls assignTakeToSide with a correctly formatted take when a new row arrives", () => {
-        const assignTakeToSide = jest.fn();
+        const assignTakeToSide = vi.fn();
 
         // Capture the callback that .on() receives so we can fire it manually
         let capturedCallback: Function | null = null;
-        const subscribeMock = jest.fn();
-        const onMock = jest.fn().mockImplementation((_event, _filter, cb) => {
+        const subscribeMock = vi.fn();
+        const onMock = vi.fn().mockImplementation((_event, _filter, cb) => {
             capturedCallback = cb;
             return { subscribe: subscribeMock };
         });
@@ -91,11 +93,11 @@ describe("TakeServices.subscribeToTakesUpdates", () => {
 
     it("returns the result of .subscribe()", () => {
         const fakeSubscription = { status: "SUBSCRIBED" };
-        const subscribeMock = jest.fn().mockReturnValue(fakeSubscription);
-        const onMock = jest.fn().mockReturnValue({ subscribe: subscribeMock });
+        const subscribeMock = vi.fn().mockReturnValue(fakeSubscription);
+        const onMock = vi.fn().mockReturnValue({ subscribe: subscribeMock });
         mockChannel.mockReturnValue({ on: onMock });
 
-        const result = TakeServices.subscribeToTakesUpdates(jest.fn());
+        const result = TakeServices.subscribeToTakesUpdates(vi.fn());
 
         expect(result).toEqual(fakeSubscription);
     });
@@ -115,8 +117,8 @@ describe("TakeServices.loadAllTakesAndTopic", () => {
 
     it("returns the topic and takes from the active debate", async () => {
         mockFrom.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                eq: jest.fn().mockResolvedValue({ data: fakeData, error: null }),
+            select: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: fakeData, error: null }),
             }),
         });
 
@@ -129,8 +131,8 @@ describe("TakeServices.loadAllTakesAndTopic", () => {
     });
 
     it("queries the correct table and filters by is_active", async () => {
-        const eqMock     = jest.fn().mockResolvedValue({ data: fakeData, error: null });
-        const selectMock = jest.fn().mockReturnValue({ eq: eqMock });
+        const eqMock     = vi.fn().mockResolvedValue({ data: fakeData, error: null });
+        const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
         mockFrom.mockReturnValue({ select: selectMock });
 
         await TakeServices.loadAllTakesAndTopic();
@@ -141,12 +143,12 @@ describe("TakeServices.loadAllTakesAndTopic", () => {
 
     it("throws a descriptive error when the DB call fails", async () => {
         mockFrom.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                eq: jest.fn().mockResolvedValue({ data: null, error: new Error("DB error") }),
+            select: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: null, error: new Error("DB error") }),
             }),
         });
 
-        await expect(TakeServices.loadAllTakesAndTopic()).rejects.toThrow(
+        expect(TakeServices.loadAllTakesAndTopic()).rejects.toThrow(
             "Connection to DB Failed! Could not load all takes! Function: loadAlLTakes()"
         );
     });
@@ -160,8 +162,8 @@ describe("TakeServices.getTopic", () => {
     it("returns the topic and expiration date from the active debate", async () => {
         const fakeData = [{ topic: "Climate Change", Expiration_Date: "2025-12-31" }];
         mockFrom.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                eq: jest.fn().mockResolvedValue({ data: fakeData, error: null }),
+            select: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: fakeData, error: null }),
             }),
         });
 
@@ -174,8 +176,8 @@ describe("TakeServices.getTopic", () => {
     });
 
     it("queries the Debates table and filters by is_active", async () => {
-        const eqMock     = jest.fn().mockResolvedValue({ data: [{ topic: "T", Expiration_Date: "2025-12-31" }], error: null });
-        const selectMock = jest.fn().mockReturnValue({ eq: eqMock });
+        const eqMock     = vi.fn().mockResolvedValue({ data: [{ topic: "T", Expiration_Date: "2025-12-31" }], error: null });
+        const selectMock = vi.fn().mockReturnValue({ eq: eqMock });
         mockFrom.mockReturnValue({ select: selectMock });
 
         await TakeServices.getTopic();
@@ -186,12 +188,12 @@ describe("TakeServices.getTopic", () => {
 
     it("throws a descriptive error when the DB call fails", async () => {
         mockFrom.mockReturnValue({
-            select: jest.fn().mockReturnValue({
-                eq: jest.fn().mockResolvedValue({ data: null, error: new Error("DB error") }),
+            select: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ data: null, error: new Error("DB error") }),
             }),
         });
 
-        await expect(TakeServices.getTopic()).rejects.toThrow(
+        expect(TakeServices.getTopic()).rejects.toThrow(
             "Connection to DB Failed! Could not load topic! Function: getTopic()"
         );
     });
@@ -212,9 +214,9 @@ describe("TakeServices.submitNewTake", () => {
     // Builds the chain for the INSERT into Takes
     function buildInsertChain(takeId: string | null, error: Error | null) {
         return {
-            insert: jest.fn().mockReturnValue({
-                select: jest.fn().mockReturnValue({
-                    single: jest.fn().mockResolvedValue({
+            insert: vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                    single: vi.fn().mockResolvedValue({
                         data: takeId ? { take_id: takeId } : null,
                         error,
                     }),
@@ -226,8 +228,8 @@ describe("TakeServices.submitNewTake", () => {
     // Builds the chain for the UPDATE on Users
     function buildUpdateChain(error: Error | null) {
         return {
-            update: jest.fn().mockReturnValue({
-                eq: jest.fn().mockResolvedValue({ error }),
+            update: vi.fn().mockReturnValue({
+                eq: vi.fn().mockResolvedValue({ error }),
             }),
         };
     }
@@ -252,8 +254,8 @@ describe("TakeServices.submitNewTake", () => {
     });
 
     it("links the correct take_id back to the correct user", async () => {
-        const eqMock     = jest.fn().mockResolvedValue({ error: null });
-        const updateMock = jest.fn().mockReturnValue({ eq: eqMock });
+        const eqMock     = vi.fn().mockResolvedValue({ error: null });
+        const updateMock = vi.fn().mockReturnValue({ eq: eqMock });
         mockFrom
             .mockReturnValueOnce(buildInsertChain("take-abc", null))
             .mockReturnValueOnce({ update: updateMock });
@@ -267,7 +269,7 @@ describe("TakeServices.submitNewTake", () => {
     it("throws a descriptive error when the Takes insert fails", async () => {
         mockFrom.mockReturnValueOnce(buildInsertChain(null, new Error("Insert failed")));
 
-        await expect(TakeServices.submitNewTake(newTake)).rejects.toThrow(
+        expect(TakeServices.submitNewTake(newTake)).rejects.toThrow(
             "Connection to DB Failed! Could not submit new Take! Function: submitNewTake()"
         );
     });
@@ -277,7 +279,7 @@ describe("TakeServices.submitNewTake", () => {
             .mockReturnValueOnce(buildInsertChain("take-abc", null))
             .mockReturnValueOnce(buildUpdateChain(new Error("Update failed")));
 
-        await expect(TakeServices.submitNewTake(newTake)).rejects.toThrow(
+        expect(TakeServices.submitNewTake(newTake)).rejects.toThrow(
             "DB Failure: Could not link Take to User. Function: submitNewTake()"
         );
     });
@@ -285,7 +287,7 @@ describe("TakeServices.submitNewTake", () => {
     it("does not attempt to update Users if the Takes insert fails", async () => {
         mockFrom.mockReturnValueOnce(buildInsertChain(null, new Error("Insert failed")));
 
-        await expect(TakeServices.submitNewTake(newTake)).rejects.toThrow();
+        expect(TakeServices.submitNewTake(newTake)).rejects.toThrow();
 
         // mockFrom should only have been called once (for Takes), never for Users
         expect(mockFrom).toHaveBeenCalledTimes(1);

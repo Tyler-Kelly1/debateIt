@@ -1,22 +1,23 @@
 import { ReactionService } from "../Services/reactionService";
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 // ─── Mock the Supabase client ────────────────────────────────────────────────
-jest.mock("../src/config/supabaseClient.js", () => {
+vi.mock("../src/config/supabaseClient.js", () => {
     return {
-        __esModule: true,
         default: {
-            from: jest.fn(),
-            channel: jest.fn(),
+            from: vi.fn(),
+            channel: vi.fn(),
         },
     };
 });
 
 import supabase from "../src/config/supabaseClient.js";
 
-const mockFrom    = supabase.from    as jest.Mock;
-const mockChannel = supabase.channel as jest.Mock;
+const mockFrom    = supabase.from    as Mock;
+const mockChannel = supabase.channel as Mock;
 
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => vi.clearAllMocks());
 
 // ─────────────────────────────────────────────────────────────────────────────
 // subscribeToReactionsUpdates
@@ -24,21 +25,21 @@ beforeEach(() => jest.clearAllMocks());
 describe("ReactionService.subscribeToReactionsUpdates", () => {
 
     it("calls channel with the correct channel name", () => {
-        const subscribeMock = jest.fn().mockReturnValue({ status: "SUBSCRIBED" });
-        const onMock        = jest.fn().mockReturnValue({ subscribe: subscribeMock });
+        const subscribeMock = vi.fn().mockReturnValue({ status: "SUBSCRIBED" });
+        const onMock        = vi.fn().mockReturnValue({ subscribe: subscribeMock });
         mockChannel.mockReturnValue({ on: onMock });
 
-        ReactionService.subscribeToReactionsUpdates(jest.fn());
+        ReactionService.subscribeToReactionsUpdates(vi.fn());
 
         expect(mockChannel).toHaveBeenCalledWith("reaction_updates");
     });
 
     it("registers a listener for all events (*) on the Reactions table", () => {
-        const subscribeMock = jest.fn().mockReturnValue({ status: "SUBSCRIBED" });
-        const onMock        = jest.fn().mockReturnValue({ subscribe: subscribeMock });
+        const subscribeMock = vi.fn().mockReturnValue({ status: "SUBSCRIBED" });
+        const onMock        = vi.fn().mockReturnValue({ subscribe: subscribeMock });
         mockChannel.mockReturnValue({ on: onMock });
 
-        ReactionService.subscribeToReactionsUpdates(jest.fn());
+        ReactionService.subscribeToReactionsUpdates(vi.fn());
 
         expect(onMock).toHaveBeenCalledWith(
             "postgres_changes",
@@ -48,12 +49,12 @@ describe("ReactionService.subscribeToReactionsUpdates", () => {
     });
 
     it("calls assignReactionChange with the updated reaction when a change arrives", () => {
-        const assignReactionChange = jest.fn();
+        const assignReactionChange = vi.fn();
 
         // Capture the callback so we can fire it manually
         let capturedCallback: Function | null = null;
-        const subscribeMock = jest.fn();
-        const onMock = jest.fn().mockImplementation((_event, _filter, cb) => {
+        const subscribeMock = vi.fn();
+        const onMock = vi.fn().mockImplementation((_event, _filter, cb) => {
             capturedCallback = cb;
             return { subscribe: subscribeMock };
         });
@@ -80,11 +81,11 @@ describe("ReactionService.subscribeToReactionsUpdates", () => {
 
     it("returns the result of .subscribe()", () => {
         const fakeSubscription = { status: "SUBSCRIBED" };
-        const subscribeMock    = jest.fn().mockReturnValue(fakeSubscription);
-        const onMock           = jest.fn().mockReturnValue({ subscribe: subscribeMock });
+        const subscribeMock    = vi.fn().mockReturnValue(fakeSubscription);
+        const onMock           = vi.fn().mockReturnValue({ subscribe: subscribeMock });
         mockChannel.mockReturnValue({ on: onMock });
 
-        const result = ReactionService.subscribeToReactionsUpdates(jest.fn());
+        const result = ReactionService.subscribeToReactionsUpdates(vi.fn());
 
         expect(result).toEqual(fakeSubscription);
     });
@@ -103,14 +104,14 @@ describe("ReactionService.submitNewReaction", () => {
 
     it("resolves without error on a successful insert", async () => {
         mockFrom.mockReturnValue({
-            insert: jest.fn().mockResolvedValue({ error: null }),
+            insert: vi.fn().mockResolvedValue({ error: null }),
         });
 
         await expect(ReactionService.submitNewReaction(newReaction)).resolves.toBeUndefined();
     });
 
     it("inserts into the correct table with the correct reaction", async () => {
-        const insertMock = jest.fn().mockResolvedValue({ error: null });
+        const insertMock = vi.fn().mockResolvedValue({ error: null });
         mockFrom.mockReturnValue({ insert: insertMock });
 
         await ReactionService.submitNewReaction(newReaction);
@@ -121,10 +122,10 @@ describe("ReactionService.submitNewReaction", () => {
 
     it("throws a descriptive error when the insert fails", async () => {
         mockFrom.mockReturnValue({
-            insert: jest.fn().mockResolvedValue({ error: new Error("Insert failed") }),
+            insert: vi.fn().mockResolvedValue({ error: new Error("Insert failed") }),
         });
 
-        await expect(ReactionService.submitNewReaction(newReaction)).rejects.toThrow(
+        expect(ReactionService.submitNewReaction(newReaction)).rejects.toThrow(
             "Connection to DB Failed! Could not submit new Reaction! Function: submitNewReaction()"
         );
     });
@@ -134,7 +135,7 @@ describe("ReactionService.submitNewReaction", () => {
 
         for (const type of types) {
             mockFrom.mockReturnValue({
-                insert: jest.fn().mockResolvedValue({ error: null }),
+                insert: vi.fn().mockResolvedValue({ error: null }),
             });
 
             await expect(
@@ -157,9 +158,9 @@ describe("ReactionService.updateReaction", () => {
 
     // Builds the full update chain with two .eq() calls
     function buildUpdateChain(error: Error | null) {
-        const eqTakeMock = jest.fn().mockResolvedValue({ error });
-        const eqUserMock = jest.fn().mockReturnValue({ eq: eqTakeMock });
-        const updateMock = jest.fn().mockReturnValue({ eq: eqUserMock });
+        const eqTakeMock = vi.fn().mockResolvedValue({ error });
+        const eqUserMock = vi.fn().mockReturnValue({ eq: eqTakeMock });
+        const updateMock = vi.fn().mockReturnValue({ eq: eqUserMock });
         return { updateMock, eqUserMock, eqTakeMock };
     }
 
@@ -194,7 +195,7 @@ describe("ReactionService.updateReaction", () => {
         const { updateMock } = buildUpdateChain(new Error("Update failed"));
         mockFrom.mockReturnValue({ update: updateMock });
 
-        await expect(ReactionService.updateReaction(updatedReaction)).rejects.toThrow(
+        expect(ReactionService.updateReaction(updatedReaction)).rejects.toThrow(
             "Connection to DB Failed! Could not update Reaction! Function: updateReaction()"
         );
     });

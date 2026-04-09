@@ -1,33 +1,34 @@
 import { AuthService } from "../Services/authService";
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 // ─── Mock the Supabase client ────────────────────────────────────────────────
 // We mock the entire module so no real network calls are ever made.
-jest.mock("../src/config/supabaseClient.js", () => ({
-    __esModule: true,
+vi.mock("../src/config/supabaseClient.js", () => ({
     default: {
         auth: {
-            signUp: jest.fn(),
-            signInWithPassword: jest.fn(),
-            signOut: jest.fn(),
-            getUser: jest.fn(),
-            getSession: jest.fn(),
+            signUp: vi.fn(),
+            signInWithPassword: vi.fn(),
+            signOut: vi.fn(),
+            getUser: vi.fn(),
+            getSession: vi.fn(),
         },
-        rpc: jest.fn(),
+        rpc: vi.fn(),
     },
 }));
 
 import supabase from "../src/config/supabaseClient.js";
 
 // Typed references to each mocked method for convenience
-const mockSignUp            = supabase.auth.signUp            as jest.Mock;
-const mockSignIn            = supabase.auth.signInWithPassword as jest.Mock;
-const mockSignOut           = supabase.auth.signOut            as jest.Mock;
-const mockGetUser           = supabase.auth.getUser            as jest.Mock;
-const mockGetSession        = supabase.auth.getSession         as jest.Mock;
-const mockRpc               = supabase.rpc                     as jest.Mock;
+const mockSignUp            = supabase.auth.signUp            as Mock;
+const mockSignIn            = supabase.auth.signInWithPassword as Mock;
+const mockSignOut           = supabase.auth.signOut            as Mock;
+const mockGetUser           = supabase.auth.getUser            as Mock;
+const mockGetSession        = supabase.auth.getSession         as Mock;
+const mockRpc               = supabase.rpc                     as Mock;
 
 // Clear call history between tests so they don't bleed into each other
-beforeEach(() => jest.clearAllMocks());
+beforeEach(() => vi.clearAllMocks());
 
 // ─────────────────────────────────────────────────────────────────────────────
 // registerAccount
@@ -58,6 +59,11 @@ describe("AuthService.registerAccount", () => {
         expect(mockSignUp).toHaveBeenCalledWith({
             email: "alice@example.com",
             password: "password123",
+            options: {
+                data: {
+                    display_name: "alice"
+                }
+            }
         });
     });
 
@@ -81,7 +87,7 @@ describe("AuthService.registerAccount", () => {
         mockSignUp.mockResolvedValue({ data: {user: {id: "uuid-123" }}, error: authError });
 
 
-        await expect(
+        expect(
             AuthService.registerAccount("alice", "alice@example.com", "password123")
         ).rejects.toThrow("Email already in use");
     });
@@ -94,7 +100,7 @@ describe("AuthService.registerAccount", () => {
         const rpcError = new Error("Username already taken");
         mockRpc.mockResolvedValue({ error: rpcError });
 
-        await expect(
+        expect(
             AuthService.registerAccount("alice", "alice@example.com", "password123")
         ).rejects.toThrow("Username already taken");
     });
