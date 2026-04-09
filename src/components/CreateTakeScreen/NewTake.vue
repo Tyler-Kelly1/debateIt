@@ -131,7 +131,7 @@ async function handleSubmitTake() {
             x_circle
           </span>
         </span>
-        {{userSide}}
+        {{userSide ? 'consensus' : 'dissent'}}
       </div>
     </div>
 
@@ -211,8 +211,5 @@ async function handleSubmitTake() {
 .disagreeTextInput:focus{
   border-color: #c10007;
 }
-
-
-
 
 </style>
