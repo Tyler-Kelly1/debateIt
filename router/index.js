@@ -51,7 +51,6 @@ const router = createRouter({
 // NAVIGATION GUARD: The "Bouncer" logic
 router.beforeEach(async (to, from) => {
 
-
         const loggedIn = await AuthService.isLoggedIn();
 
         // 1. PUBLIC ACCESS CHECK

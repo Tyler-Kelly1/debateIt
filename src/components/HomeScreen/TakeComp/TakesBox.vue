@@ -93,17 +93,33 @@ function handleUserReactionCheck(takeId){
 <template>
   <div class="bg-surface text-on-surface min-h-screen flex flex-col gap-2">
 
-  <div class="filterBar">
+    <div class="flex flex-col p-2 items-center justify-center">
 
-    <div @click="updateSortingFilter('likes')">
-      ^
-    </div>
-    <div @click="updateSortingFilter('dislikes')"
-    >
-      V
+      <div class="flex">
+
+        <div @click="updateSortingFilter('likes')">
+          <span class="material-symbols-outlined">
+            arrow_upward_alt
+          </span>
+        </div>
+
+        <div class="flex flex-col" @click="updateSortingFilter('dislikes')"
+        >
+        <span class="material-symbols-outlined">
+            arrow_downward_alt
+        </span>
+
+        </div>
+
+
+      </div>
+
+      <span>
+          Filter
+      </span>
+
     </div>
 
-  </div>
     <div class="board">
       <div class="boardHeader">
         <div class="header agreeHeader">Consensus</div>
@@ -164,9 +180,7 @@ function handleUserReactionCheck(takeId){
   max-width: 1360px;
   margin: 0 auto;
   background: #f8f8f8;
-  border-radius: 2px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 .boardHeader {
@@ -246,11 +260,6 @@ flex: 1;
   color: #94a0b8;
   font-size: 1.1rem;
   min-height: 140px;
-}
-
-.filterBar {
-  display: flex;
-  margin: auto;
 }
 
 /* Specific border colors to differentiate the "Sides" of the social debate */

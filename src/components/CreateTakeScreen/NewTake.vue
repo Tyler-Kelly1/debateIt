@@ -1,4 +1,5 @@
 <script setup lang="js">
+
 import {onMounted, ref} from "vue";
 import {TakeServices as TakeService, TakeServices} from "../../../Services/takesService";
 import {AuthService} from "../../../Services/authService.ts";
@@ -6,10 +7,13 @@ import {useRouter} from "vue-router";
 import {UserService} from "../../../Services/userService.ts";
 import ErrorBox from "../GeneralComps/ErrorBox.vue"
 
+import { AllProfanity } from 'allprofanity';
+const filter = new AllProfanity();
 
 // 2. LOCAL STATE (Internal Variables)
 // 'take' stores what the user is currently typing in the textarea.
 const take = ref('')
+
 const debateTopic = ref(null)
 const userID = ref('')
 const userSide = ref(null)
@@ -70,11 +74,11 @@ async function handleSubmitTake() {
     return;
   }
 
-  const newTake = take.value;
+  const sanitizedTake = filter.cleanWithPlaceholder(take.value, "[CENSORED]")
 
   const dBFormattedTake = {
 
-    message: newTake,
+    message: sanitizedTake,
     user_id: userID.value,
     topic: debateTopic.value,
     side: userSide.value
@@ -110,9 +114,9 @@ async function handleSubmitTake() {
     <ErrorBox @close-error="()=>{showError= false}">{{errorCode}}</ErrorBox>
   </div>
 
-
   <div :class="{ 'opacity-0': loadingNextPage }" v-if="userSide !== null && debateTopic" class="bg-surface overflow-x-hidden min-h-screen flex items-center justify-center p-6 md:p-12 transition-opacity duration-600 ease-in-out">
   <main class="w-full max-w-4xl mx-auto flex flex-col justify-center min-h-[80vh]">
+
     <!-- Choice Indicator -->
     <div class="mb-8 flex items-center gap-3">
       <span :class="{'agreeColors' : userSide, 'disagreeColors' : !userSide}" class="text-[10px] uppercase tracking-[0.2em] font-black text-white px-3 py-1 glow-primary">
@@ -130,18 +134,21 @@ async function handleSubmitTake() {
         {{userSide}}
       </div>
     </div>
+
     <!-- Topic Section -->
     <section class="mb-12">
       <h1 class="text-4xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
         {{debateTopic}}
       </h1>
     </section>
+
     <!-- Input Area -->
     <section class="flex flex-col mb-12">
       <div class="relative group">
         <textarea v-model="take" :class="{'agreeTextInput' : userSide, 'disagreeTextInput' : !userSide}" class="w-full h-64 p-6 text-xl font-medium bg-surface-container-low border-2 border-black focus:ring-0 focus:outline-none resize-none kinetic-shadow transition-all  group-focus-within:shadow-none" placeholder="TYPE YOUR TAKE HERE..."></textarea>
       </div>
     </section>
+
     <!-- Submit Button & Footer -->
     <div class="w-full">
       <button @click="handleSubmitTake" :class="{'agreeColors' : userSide, 'disagreeColors' : !userSide}" class="w-full text-white font-black text-2xl py-6 border-2 border-black kinetic-shadow
