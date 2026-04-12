@@ -7,5 +7,8 @@ config({ path: '../.env' })
 export default mergeConfig(viteConfig, defineConfig({
     test: {
         environment: 'node',
+        testTimeout: 600000,
+        hookTimeout: 600000
+
     }
 }))

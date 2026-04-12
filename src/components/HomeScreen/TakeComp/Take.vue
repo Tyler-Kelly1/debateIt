@@ -139,6 +139,7 @@ function handleNewReply(){
   }
 
 
+
   const result = TakeServices.submitNewReply(
       newReply.value,
       props.user_id,
@@ -147,9 +148,9 @@ function handleNewReply(){
 
   //Optimistically UI add the reply immediately
   if(result){
-
     repliesLocal.value.push({take_id:props.take_id, message:newReply.value})
     newReply.value = ""
+
 
   }
 

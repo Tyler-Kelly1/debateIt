@@ -138,7 +138,7 @@ export const TakeServices = {
 
     },
 
-    async submitNewReply(newReply:string, userId:string, takeId:string):Promise<boolean>{
+    async submitNewReply(newReply:string, userId:string, takeId:string):Promise<{success: boolean, id: string}>{
 
 
         const {data, error} = await supabase
@@ -155,7 +155,8 @@ export const TakeServices = {
 
         if(error) throw Error("Connection to DB Failed!");
 
-        return true;
+        return {success: true, id: data[0].reply_id};
+
     }
 }
 
