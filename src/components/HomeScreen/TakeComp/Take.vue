@@ -4,6 +4,10 @@
 //Props of the comment comp
 import {computed, ref} from "vue";
 import {TakeServices} from "../../../../Services/takesService.ts";
+import { AllProfanity } from 'allprofanity';
+
+
+
 
 const props = defineProps({
 
@@ -41,6 +45,7 @@ const props = defineProps({
 
 })
 
+const filter = new AllProfanity();
 
 // Local mutable copies for optomistic UI
 const usersReactionLocal = ref(props.userReaction)
@@ -138,16 +143,20 @@ function handleNewReply(){
     return
   }
 
+  const sanitizedReply = filter.cleanWithPlaceholder(newReply.value, "[CENSORED]")
+
 
 
   const result = TakeServices.submitNewReply(
-      newReply.value,
+      sanitizedReply,
       props.user_id,
       props.take_id
   )
 
   //Optimistically UI add the reply immediately
   if(result){
+
+    repliesLocal.value.push({take_id:props.take_id, message:sanitizedReply})
     repliesLocal.value.push({take_id:props.take_id, message:newReply.value})
     newReply.value = ""
 
@@ -205,7 +214,7 @@ function handleNewReply(){
           <div>
             <textarea
                 v-model="newReply"
-                class="m-2 p-0.5 w-80 border-b-1 text-[12px]"
+                class="m-2 p-0.5 resize-none h-fit w-fit border-b-1 text-[12px]"
                 maxlength="200"
                 placeholder="Enter your opinion here..."
             />
@@ -220,22 +229,24 @@ function handleNewReply(){
           </button>
         </form>
 
-        <TransitionGroup name="reply-card" tag="div" class="flex flex-col gap-2">
-          <div
-              v-for="(reply, index) in repliesLocal"
-              :key="reply.user_id + '-' + index"
-              class="reply-card bg-white border-1 p-2 flex text-balance break-words flex-col"
-              :style="{ transitionDelay: `${index * 70}ms` }"
-          >
-            <span class="text-[10px] border-b-1 mb-2 border-black">
-              {{ user_id }}
-            </span>
+        <div class="replies-scroll">
+          <TransitionGroup name="reply-card" tag="div" class="flex flex-col gap-2">
+            <div
+                v-for="(reply, index) in repliesLocal"
+                :key="reply.user_id + '-' + index"
+                class="reply-card bg-white border-1 p-2 flex text-balance break-words flex-col"
+                :style="{ transitionDelay: `${index * 70}ms` }"
+            >
+      <span class="text-[10px] border-b-1 mb-2 border-black">
+        {{ user_id }}
+      </span>
 
-            <p class="text-[10px] font-medium leading-tight tracking-tight gap-0.5">
-              {{ reply.message }}
-            </p>
-          </div>
-        </TransitionGroup>
+              <p class="text-[10px] font-medium leading-tight tracking-tight gap-0.5">
+                {{ reply.message }}
+              </p>
+            </div>
+          </TransitionGroup>
+        </div>
       </div>
     </Transition>
   </div>
@@ -313,4 +324,11 @@ function handleNewReply(){
   opacity: 0;
   transform: translateY(-18px);
 }
+
+.replies-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 </style>
