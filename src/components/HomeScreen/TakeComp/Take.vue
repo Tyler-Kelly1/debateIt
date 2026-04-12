@@ -157,7 +157,6 @@ function handleNewReply(){
   if(result){
 
     repliesLocal.value.push({take_id:props.take_id, message:sanitizedReply})
-    repliesLocal.value.push({take_id:props.take_id, message:newReply.value})
     newReply.value = ""
 
 
