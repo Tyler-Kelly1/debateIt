@@ -7,9 +7,9 @@ const hourGlass = ref("hourglass_bottom")
 const updateTimer = () => {
   const now = new Date();
 
-  // 1. Get current time in Arkansas (Central Time)
+  // 1. Get current time UTC
   const centralTime = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/Chicago',
+    timeZone: 'UTC',
     hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
   }).formatToParts(now);
 
