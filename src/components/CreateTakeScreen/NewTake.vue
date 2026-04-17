@@ -74,6 +74,12 @@ async function handleSubmitTake() {
     return;
   }
 
+  if(take.value === ""){
+    errorCode.value = "Please enter a take."
+    showError.value = true
+    return;
+  }
+
   const sanitizedTake = filter.cleanWithPlaceholder(take.value, "[CENSORED]")
 
   const dBFormattedTake = {
@@ -136,10 +142,12 @@ async function handleSubmitTake() {
     </div>
 
     <!-- Topic Section -->
-    <section class="mb-12">
+    <section class="mb-5">
       <h1 class="text-4xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
         {{debateTopic}}
       </h1>
+
+      <h3>Why do you {{userSide ? 'Agree' : 'Disagree'}}?</h3>
     </section>
 
     <!-- Input Area -->
@@ -158,12 +166,8 @@ async function handleSubmitTake() {
       <div class="mt-6 flex flex-col md:flex-row justify-between items-start md:items-center px-2 gap-4">
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-1">
-            <span class="material-symbols-outlined text-xs">visibility</span>
-            <span class="text-[10px] font-bold">PUBLIC</span>
-          </div>
-          <div class="flex items-center gap-1">
             <span class="material-symbols-outlined text-xs">fingerprint</span>
-            <span class="text-[10px] font-bold">ANONYMOUS</span>
+            <span class="text-[10px] font-bold">ANONYMOUS, ALL OPINIONS ARE HIDDEN. DO NOT FEAR THE MAJORITY...</span>
           </div>
         </div>
         <div class="text-[10px] font-bold uppercase tracking-widest text-zinc-400">

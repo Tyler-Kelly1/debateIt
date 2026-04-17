@@ -1,6 +1,15 @@
 <script setup lang="js">
 import { ref, computed } from "vue";
 
+
+const props = defineProps({
+
+  topic:{
+    type: String
+  }
+
+})
+
 const emit = defineEmits(["onSwipe"]);
 
 const swipeCard = ref(null);
@@ -83,7 +92,6 @@ function onEnd() {
 
 <template>
 
-
   <div class="main-wrapper md:m-0" @mousemove="onMove" @mouseup="onEnd" @touchmove="onMove" @touchend="onEnd">
 
     <div class="edge-glow glow-left" ref="glowLeft"></div>
@@ -94,9 +102,22 @@ function onEnd() {
 
       <!-- Central Swipe Card Container -->
         <div class="swipable-card-container relative w-full max-w-[300px] md:max-w-sm aspect-[3/4.2]">
+
+
+
+
           <!-- Main Interactive Card -->
           <div ref="swipeCard" :style="cardStyle" @mousedown="onStart" @touchstart="onStart" class="swipable-card relative w-full h-full bg-brutalist-white shadow-brutal-lg flex flex-col overflow-hidden border-2 border-brutalist-black cursor-grab active:cursor-grabbing" >
             <div class="flex-grow p-8 md:p-12 flex flex-col justify-center text-center">
+
+              <section class="w-full text-center md:mt-2 mt-w mb-10 [@media(max-height:680px)]:mb-3 [@media(max-height:680px)]:mt-5">
+                <div class="max-w-4xl mx-auto">
+                  <h1 class="text-2xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
+                    "{{topic}}"
+                  </h1>
+                </div>
+              </section>
+
               <div class="mb-8 md:mb-12 inline-flex mx-auto items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-primary/5 text-primary border-2 border-primary">
                 <span class="material-symbols-outlined text-3xl md:text-4xl" data-icon="touch_app">touch_app</span>
               </div>

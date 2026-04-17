@@ -93,14 +93,17 @@ async function handleChoice(side) {
 
     <section class="w-full text-center md:mt-40 mt-20 mb-10 [@media(max-height:680px)]:mb-3 [@media(max-height:680px)]:mt-5">
       <div class="max-w-4xl mx-auto">
-        <h1 class="text-5xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
-          {{topic}}
+        <h1 class="text-4xl md:text-6xl font-black uppercase leading-[0.9] tracking-tighter mb-4">
+          Do you agree or disagree with this statement?
         </h1>
       </div>
     </section>
 
     <div class="">
-      <CardSwipe @onSwipe="handleChoice"></CardSwipe>
+      <CardSwipe
+          @onSwipe="handleChoice"
+          :topic="topic"
+      ></CardSwipe>
     </div>
 
   </div>
